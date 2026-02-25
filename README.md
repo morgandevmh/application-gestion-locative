@@ -26,8 +26,10 @@ Bien que des solutions existent déjà sur le marché, disposer de leur propre o
 Cet outil a donc pour ambition de centraliser et simplifier la gestion administrative de biens locatifs au sein d’une interface claire, structurée et sécurisée.
 
 Ce projet constitue également pour moi une double opportunité :
+
 - accompagner concrètement leur activité,
 - développer une application full-stack complète dans le cadre de la validation de mon Titre Professionnel Développeur Web et Web Mobile.
+
 ---
 
 ## Fonctionnalités
@@ -35,8 +37,8 @@ Ce projet constitue également pour moi une double opportunité :
 ### MVP (V1)
 
 - Authentification sécurisée (inscription / connexion)
-- Gestion des biens immobiliers 
-- Gestion des locataires par bien 
+- Gestion des biens immobiliers
+- Gestion des locataires par bien
 - Suivi des informations administratives :
   - Dates d’entrée et de sortie
   - Montant de caution
@@ -70,7 +72,7 @@ Ce projet constitue également pour moi une double opportunité :
 
 - **PostgreSQL** – Base de données relationnelle
 - **Prisma ORM** – Gestion des modèles et requêtes
-- **NextAuth / Better Auth** – Authentification 
+- **NextAuth / Better Auth** – Authentification
 
 ### Outils
 
@@ -84,25 +86,25 @@ Ce projet constitue également pour moi une double opportunité :
 
 ### Phase 1 – MVP
 
-- [x] Cadrage du projet 
-- [x] Choix stack technique  
-- [ ] Setup technique du projet 
-- [ ] Authentification  
-- [ ] CRUD Biens  
-- [ ] CRUD Locataires  
+- [x] Cadrage du projet
+- [x] Choix stack technique
+- [ ] Setup technique du projet
+- [ ] Authentification
+- [ ] CRUD Biens
+- [ ] CRUD Locataires
 - [ ] Génération de bail
 - [ ] Sécurité et validation
 - [ ] UI
-- [ ] Déploiement  
+- [ ] Déploiement
 
 ### Phase 2 – Évolution produit
 
-- Espace locataire  
-- Notifications automatiques  
-- Historique du bien  
-- Export et archivage des documents  
-- Paiement en ligne  
-- Modèle SaaS ?  
+- Espace locataire
+- Notifications automatiques
+- Historique du bien
+- Export et archivage des documents
+- Paiement en ligne
+- Modèle SaaS ?
 
 ---
 
@@ -112,10 +114,10 @@ Projet développé dans le cadre d’un **Titre Professionnel Développeur Web e
 
 ### Objectifs pédagogiques :
 
-- Concevoir une application full-stack  
-- Mettre en place une architecture scalable  
-- Appliquer les bonnes pratiques (sécurité, isolation des données, clean code)  
-- Gérer un projet de bout en bout (conception, développement, déploiement)  
+- Concevoir une application full-stack
+- Mettre en place une architecture scalable
+- Appliquer les bonnes pratiques (sécurité, isolation des données, clean code)
+- Gérer un projet de bout en bout (conception, développement, déploiement)
 
 Présentation prévue : Juin 2026
 
@@ -127,16 +129,16 @@ Les contributions présentées ci-dessous concernent la seconde partie du projet
 
 ### Pour contribuer :
 
-1. Fork le projet  
-2. Créer une branche `feature/*`  
-3. Ouvrir une Pull Request  
-4. Décrire clairement les modifications proposées  
+1. Fork le projet
+2. Créer une branche `feature/*`
+3. Ouvrir une Pull Request
+4. Décrire clairement les modifications proposées
 
 ### Merci de :
 
-- Respecter la structure existante  
-- Maintenir la cohérence du code  
-- Documenter toute nouvelle fonctionnalité  
+- Respecter la structure existante
+- Maintenir la cohérence du code
+- Documenter toute nouvelle fonctionnalité
 
 ---
 
