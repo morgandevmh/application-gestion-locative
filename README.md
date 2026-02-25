@@ -102,7 +102,7 @@ Ce projet constitue également pour moi une double opportunité :
 - Historique du bien  
 - Export et archivage des documents  
 - Paiement en ligne  
-- Modèle SaaS (abonnement)  
+- Modèle SaaS ?  
 
 ---
 
