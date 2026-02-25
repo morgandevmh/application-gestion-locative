@@ -84,8 +84,8 @@ Ce projet constitue également pour moi une double opportunité :
 
 ### Phase 1 – MVP
 
-- [ ] Cadrage du projet 
-- [ ] Choix stack technique  
+- [x] Cadrage du projet 
+- [x] Choix stack technique  
 - [ ] Setup technique du projet 
 - [ ] Authentification  
 - [ ] CRUD Biens  
