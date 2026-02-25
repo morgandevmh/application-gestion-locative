@@ -1,0 +1,111 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ========================
+// ENUMS
+// ========================
+
+enum Role {
+  ADMIN
+  PROPRIETAIRE
+}
+
+enum TypeBien {
+  APPARTEMENT
+  MAISON
+  STUDIO
+  COLOCATION
+  CHAMBRE
+}
+
+enum StatutLocataire {
+  ACTIF
+  SORTI
+}
+
+// ========================
+// MODELS
+// ========================
+
+model User {
+  id         Int             @id @default(autoincrement())
+  email      String          @unique
+  password   String
+  role       Role            @default(PROPRIETAIRE)
+  biens      Bien[]
+  templates  BailTemplate[]
+  createdAt  DateTime        @default(now())
+}
+
+model Bien {
+  id          Int         @id @default(autoincrement())
+  nom         String
+  adresse     String
+  type        TypeBien
+  description String?
+
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+
+  parentId    Int?
+  parent      Bien?       @relation("SousBiens", fields: [parentId], references: [id])
+  sousBiens   Bien[]      @relation("SousBiens")
+
+  locataires  Locataire[]
+  bails       Bail[]
+  createdAt   DateTime    @default(now())
+}
+
+model Locataire {
+  id         Int              @id @default(autoincrement())
+  nom        String
+  email      String?
+  telephone  String?
+  dateEntree DateTime
+  dateSortie DateTime?
+  caution    Float
+  statut     StatutLocataire  @default(ACTIF)
+  notes      String?
+
+  bien       Bien             @relation(fields: [bienId], references: [id])
+  bienId     Int
+  bails      Bail[]
+
+  createdAt  DateTime         @default(now())
+}
+
+model BailTemplate {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  contenu   String
+
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+
+  bails     Bail[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bail {
+  id          Int          @id @default(autoincrement())
+  contenu     String
+
+  template    BailTemplate @relation(fields: [templateId], references: [id])
+  templateId  Int
+
+  bien        Bien         @relation(fields: [bienId], references: [id])
+  bienId      Int
+
+  locataire   Locataire    @relation(fields: [locataireId], references: [id])
+  locataireId Int
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
