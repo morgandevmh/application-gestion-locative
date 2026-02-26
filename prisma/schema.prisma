@@ -1,14 +1,14 @@
+
 datasource db {
   provider = "postgresql"
 }
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma/client"
 }
 
-// ========================
 // ENUMS
-// ========================
 
 enum Role {
   ADMIN
@@ -28,84 +28,139 @@ enum StatutLocataire {
   SORTI
 }
 
-// ========================
 // MODELS
-// ========================
 
 model User {
-  id         Int             @id @default(autoincrement())
-  email      String          @unique
-  password   String
-  role       Role            @default(PROPRIETAIRE)
-  biens      Bien[]
-  templates  BailTemplate[]
-  createdAt  DateTime        @default(now())
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  password      String
+  role          Role           @default(PROPRIETAIRE)
+  biens         Bien[]
+  templates     BailTemplate[]
+  createdAt     DateTime       @default(now())
+  name          String
+  emailVerified Boolean        @default(false)
+  image         String?
+  updatedAt     DateTime       @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
 }
 
 model Bien {
-  id          Int         @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   nom         String
   adresse     String
   type        TypeBien
   description String?
 
-  user        User        @relation(fields: [userId], references: [id])
-  userId      Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
-  parentId    Int?
-  parent      Bien?       @relation("SousBiens", fields: [parentId], references: [id])
-  sousBiens   Bien[]      @relation("SousBiens")
+  parentId  Int?
+  parent    Bien?  @relation("SousBiens", fields: [parentId], references: [id])
+  sousBiens Bien[] @relation("SousBiens")
 
-  locataires  Locataire[]
-  bails       Bail[]
-  createdAt   DateTime    @default(now())
+  locataires Locataire[]
+  bails      Bail[]
+  createdAt  DateTime    @default(now())
 }
 
 model Locataire {
-  id         Int              @id @default(autoincrement())
+  id         Int             @id @default(autoincrement())
   nom        String
   email      String?
   telephone  String?
   dateEntree DateTime
   dateSortie DateTime?
   caution    Float
-  statut     StatutLocataire  @default(ACTIF)
+  statut     StatutLocataire @default(ACTIF)
   notes      String?
 
-  bien       Bien             @relation(fields: [bienId], references: [id])
-  bienId     Int
-  bails      Bail[]
+  bien   Bien   @relation(fields: [bienId], references: [id])
+  bienId Int
+  bails  Bail[]
 
-  createdAt  DateTime         @default(now())
+  createdAt DateTime @default(now())
 }
 
 model BailTemplate {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  contenu   String
+  id      Int    @id @default(autoincrement())
+  nom     String
+  contenu String
 
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
-  bails     Bail[]
+  bails Bail[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Bail {
-  id          Int          @id @default(autoincrement())
-  contenu     String
+  id      Int    @id @default(autoincrement())
+  contenu String
 
-  template    BailTemplate @relation(fields: [templateId], references: [id])
-  templateId  Int
+  template   BailTemplate @relation(fields: [templateId], references: [id])
+  templateId Int
 
-  bien        Bien         @relation(fields: [bienId], references: [id])
-  bienId      Int
+  bien   Bien @relation(fields: [bienId], references: [id])
+  bienId Int
 
-  locataire   Locataire    @relation(fields: [locataireId], references: [id])
+  locataire   Locataire @relation(fields: [locataireId], references: [id])
   locataireId Int
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                Int
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
