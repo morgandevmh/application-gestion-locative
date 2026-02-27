@@ -1,4 +1,3 @@
-
 datasource db {
   provider = "postgresql"
 }
@@ -31,9 +30,9 @@ enum StatutLocataire {
 // MODELS
 
 model User {
-  id            Int            @id @default(autoincrement())
+  id            String         @id
   email         String         @unique
-  password      String
+  password      String?
   role          Role           @default(PROPRIETAIRE)
   biens         Bien[]
   templates     BailTemplate[]
@@ -44,8 +43,6 @@ model User {
   updatedAt     DateTime       @updatedAt
   sessions      Session[]
   accounts      Account[]
-
-  @@map("user")
 }
 
 model Bien {
@@ -55,8 +52,8 @@ model Bien {
   type        TypeBien
   description String?
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   parentId  Int?
   parent    Bien?  @relation("SousBiens", fields: [parentId], references: [id])
@@ -64,7 +61,8 @@ model Bien {
 
   locataires Locataire[]
   bails      Bail[]
-  createdAt  DateTime    @default(now())
+
+  createdAt DateTime @default(now())
 }
 
 model Locataire {
@@ -78,9 +76,10 @@ model Locataire {
   statut     StatutLocataire @default(ACTIF)
   notes      String?
 
-  bien   Bien   @relation(fields: [bienId], references: [id])
+  bien   Bien @relation(fields: [bienId], references: [id])
   bienId Int
-  bails  Bail[]
+
+  bails Bail[]
 
   createdAt DateTime @default(now())
 }
@@ -90,8 +89,8 @@ model BailTemplate {
   nom     String
   contenu String
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   bails Bail[]
 
@@ -124,20 +123,19 @@ model Session {
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
-  @@map("session")
 }
 
 model Account {
   id                    String    @id
   accountId             String
   providerId            String
-  userId                Int
+  userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
@@ -150,7 +148,6 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@index([userId])
-  @@map("account")
 }
 
 model Verification {
@@ -162,5 +159,4 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@index([identifier])
-  @@map("verification")
 }
