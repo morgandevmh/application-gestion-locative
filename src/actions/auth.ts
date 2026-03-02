@@ -1,6 +1,6 @@
 "use server";
-
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export async function register(formData: {
   firstName: string;
@@ -51,8 +51,8 @@ export async function register(formData: {
         email: formData.email,
         password: formData.password,
       },
+      headers: await headers(),
     });
-
     return { success: true };
   } catch (err: unknown) {
     console.error("Register error:", err);
@@ -82,8 +82,8 @@ export async function login(formData: {
         email: formData.email,
         password: formData.password,
       },
+      headers: await headers(),
     });
-
     return { success: true };
   } catch {
     return { error: "Email ou mot de passe incorrect." };
