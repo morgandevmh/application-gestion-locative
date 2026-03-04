@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
 
   if (!sessionCookie) {
-    return NextResponse.redirect(new URL("/test-auth", request.url));
+    return NextResponse.redirect(new URL("/connexion", request.url));
   }
 
   return NextResponse.next();
