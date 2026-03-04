@@ -49,11 +49,12 @@ export default function LoginPage() {
       {/* IMAGE / BRANDING */}
       <div
         className="
-          h-[35vh] lg:h-auto        
+          h-[35vh] lg:h-auto  
+          pb-15    
           w-full lg:w-[60%]          
           lg:order-2                 
           relative overflow-hidden
-          pb-15
+          p-0
         "
       >
         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900" />
@@ -83,7 +84,7 @@ export default function LoginPage() {
           px-6 sm:px-12 lg:px-16     
           py-10 lg:py-0              
           bg-white
-          lg:rounded-none lg:mt-0
+          lg:rounded-none lg:mt-0 
         "
       >
         <div className="w-full max-w-sm mx-auto">
