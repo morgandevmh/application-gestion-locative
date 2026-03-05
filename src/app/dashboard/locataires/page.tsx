@@ -1,3 +1,3 @@
 export default function DashboardPage() {
-    return <p>Mes Biens</p>;
+    return <p>Liste Locatiares</p>;
   }
