@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import  prisma  from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
-//CREAT C 
+//CREATE C 
 export async function POST (request: Request) {
     const session = await getSession();
 
@@ -51,4 +51,31 @@ export async function POST (request: Request) {
         )
     }
       
+}
+
+//READ R 
+
+export async function GET(request: Request) {
+    const session = await getSession();
+    if (!session){
+        return NextResponse.json(
+            {error: "Non autorisé"},
+            {status: 401}
+        )
+    }
+
+    try{
+        const bien = await prisma.bien.findMany({
+            where: {
+                userId: session.user.id
+              }
+        })
+        return NextResponse.json(bien, { status: 200})
+    } catch {
+        return NextResponse.json(
+            {error:"Erreur lors de la récupération des biens"},
+            {status: 500 }
+        )
+    }
+    
 }
