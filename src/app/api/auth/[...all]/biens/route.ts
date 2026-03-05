@@ -55,7 +55,7 @@ export async function POST (request: Request) {
 
 //READ R 
 
-export async function GET(request: Request) {
+export async function GET() {
     const session = await getSession();
     if (!session){
         return NextResponse.json(
