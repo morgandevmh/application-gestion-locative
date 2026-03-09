@@ -94,3 +94,29 @@ export async function DELETE(
       )
     }
   }
+
+  export async function GET(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+  ) {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Non autorisé" },
+        { status: 401 }
+      )
+    }
+  
+    const { id } = await params
+    const bienId = Number(id)
+
+    const existingBien = await prisma.bien.findUnique({ where: { id: bienId } })
+    if (!existingBien || existingBien.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Bien non trouvé" },
+        { status: 404 }
+      )
+    }
+     return NextResponse.json(existingBien, { status: 200 })
+
+  }
