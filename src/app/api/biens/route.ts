@@ -67,7 +67,8 @@ export async function GET() {
     try{
         const bien = await prisma.bien.findMany({
             where: {
-                userId: session.user.id
+                userId: session.user.id,
+                type: { not: "CHAMBRE" }
               }
         })
         return NextResponse.json(bien, { status: 200})

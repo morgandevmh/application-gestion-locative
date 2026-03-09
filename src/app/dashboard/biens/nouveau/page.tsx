@@ -1,3 +1,4 @@
+// New Bien (formulaire creation)
 "use client"
 import { useState } from "react";
 
@@ -105,7 +106,7 @@ export default function FormulaireBiens() {
                 <option value="MAISON">Maison</option>
                 <option value="STUDIO">Studio</option>
                 <option value="COLOCATION">Colocation</option>
-                <option value="CHAMBRE">Chambre</option>
+                {/*<option value="CHAMBRE">Chambre</option>*/}
               </select>
             </div>
       

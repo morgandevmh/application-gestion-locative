@@ -27,7 +27,7 @@ export async function PUT(
     )
   }
 
-  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION", "CHAMBRE"]
+  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"]
   if (!validTypes.includes(type)) {
     return NextResponse.json(
       { error: "Type de bien invalide" },
@@ -110,7 +110,10 @@ export async function DELETE(
     const { id } = await params
     const bienId = Number(id)
 
-    const existingBien = await prisma.bien.findUnique({ where: { id: bienId } })
+    const existingBien = await prisma.bien.findUnique
+    ({ where: { id: bienId },
+      include: {sousBiens: true}
+     })
     if (!existingBien || existingBien.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Bien non trouvé" },
