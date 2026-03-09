@@ -1,6 +1,7 @@
 // New Bien (formulaire creation)
 "use client"
 import { useState } from "react";
+import Link from "next/link";
 
 export default function FormulaireBiens() {
     const [errors, setErrors] = useState<string[]>([]);
@@ -51,6 +52,7 @@ export default function FormulaireBiens() {
     }
     return (
         <div className="max-w-lg mx-auto">
+          <Link href="/dashboard/biens" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">← Retour aux biens</Link>
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900 mb-8">
             Ajouter un bien
           </h1>

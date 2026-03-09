@@ -19,7 +19,7 @@ export async function POST(
   const { id } = await params;
   const parentId = Number(id);
 
-  // 3Verification double du parent 
+  // 3 Verification double du parent
   const colocation = await prisma.bien.findUnique({ where: { id: parentId } });
 
   if (!colocation || colocation.userId !== session.user.id) {
@@ -36,7 +36,7 @@ export async function POST(
     );
   }
 
-// 4 juste nom et description 
+  // 4 juste nom et description
   const body = await request.json();
   const { nom, description } = body;
 
@@ -47,6 +47,9 @@ export async function POST(
     );
   }
 
+  // 5 Image placeholder aléatoire
+  const images = ["/placeholders/1.jpg", "/placeholders/2.jpg", "/placeholders/3.jpg", "/placeholders/4.jpg", "/placeholders/5.jpg", "/placeholders/6.jpg", "/placeholders/7.jpg"]
+  const randomImage = images[Math.floor(Math.random() * images.length)]
 
   try {
     const chambre = await prisma.bien.create({
@@ -56,7 +59,8 @@ export async function POST(
         type: "CHAMBRE",
         adresse: colocation.adresse,
         userId: session.user.id,
-        parentId: parentId
+        parentId: parentId,
+        image: randomImage
       }
     });
     return NextResponse.json(chambre, { status: 201 });

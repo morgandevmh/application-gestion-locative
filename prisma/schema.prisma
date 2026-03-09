@@ -51,6 +51,7 @@ model Bien {
   adresse     String
   type        TypeBien
   description String?
+  image       String?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

@@ -9,7 +9,9 @@ type Bien = {
   adresse: string
   type: string
   description: string | null
+  image: string | null
 }
+
 
 export default function BiensPage() {
   const [biens, setBiens] = useState<Bien[]>([]);
@@ -18,6 +20,7 @@ export default function BiensPage() {
     async function fetchBiens() {
       const response = await fetch("/api/biens")
       const data = await response.json()
+      console.log(data)
       setBiens(data)
     }
     fetchBiens()
@@ -53,9 +56,16 @@ export default function BiensPage() {
           {biens.map((bien) => (
             <Link key={bien.id} href={`/dashboard/biens/${bien.id}`}>
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div className="h-48 bg-slate-200 flex items-center justify-center">
-                  <span className="text-slate-400 text-sm">Image à venir</span>
-                </div>
+                {bien.image ? (
+                  <img src={bien.image} alt={bien.nom} className="h-48 w-full object-cover" />
+                  ) : (
+                  <div className="h-48 bg-slate-200 flex items-center justify-center">
+                    <span className="text-slate-400 text-sm">Image à venir</span>
+                  </div>
+                )}                
+              
+                
+                
                 <div className="p-4">
                   <h2 className="font-semibold text-lg">{bien.nom}</h2>
                   <p className="text-gray-500 text-sm mt-1">{bien.adresse}</p>

@@ -23,7 +23,7 @@ export async function POST (request: Request) {
         )
     }
 
-    const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION", "CHAMBRE"]
+    const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"]
 
     if (!validTypes.includes(type)) {
       return NextResponse.json(
@@ -32,6 +32,9 @@ export async function POST (request: Request) {
       )
     }
 
+    const images = ["/placeholders/1.jpg", "/placeholders/2.jpg", "/placeholders/3.jpg", "/placeholders/4.jpg", "/placeholders/5.jpg", "/placeholders/6.jpg", "/placeholders/7.jpg" ]
+    const randomImage = images[Math.floor(Math.random() * images.length)]
+
     try {
         const bien = await prisma.bien.create({
             data: {
@@ -39,7 +42,8 @@ export async function POST (request: Request) {
               adresse,
               type,
               description,
-              userId: session.user.id
+              userId: session.user.id,
+              image: randomImage
             }
             
           })

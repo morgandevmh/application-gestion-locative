@@ -1,4 +1,4 @@
-// page details biens + condition pour colocation 
+// page details biens + condition pour colocation
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -10,17 +10,19 @@ type SousBien = {
   adresse: string
   type: string
   description: string | null
+  image: string | null
 }
 
 type Bien = {
-    id: number
-    nom: string
-    adresse: string
-    type: string
-    description: string | null
-    parentId: number | null
-    sousBiens: SousBien[]
-  }
+  id: number
+  nom: string
+  adresse: string
+  type: string
+  description: string | null
+  image: string | null
+  parentId: number | null
+  sousBiens: SousBien[]
+}
 
 export default function BienDetailPage() {
   const [bien, setBien] = useState<Bien | null>(null);
@@ -48,10 +50,21 @@ export default function BienDetailPage() {
     <div className="max-w-3xl mx-auto">
       {/* Navigation retour */}
       {bien.parentId ? (
-         <Link href={`/dashboard/biens/${bien.parentId}`} className="text-sm text-gray-500 hover:text-gray-900 transition-colors"> ← Retour à la colocation</Link>
-    ) : (
-        <Link href="/dashboard/biens" className="text-sm text-gray-500 hover:text-gray-900 transition-colors"> ← Retour aux biens </Link>
-)}
+        <Link
+          href={`/dashboard/biens/${bien.parentId}`}
+          className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          ← Retour à la colocation
+        </Link>
+      ) : (
+        <Link
+          href="/dashboard/biens"
+          className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          ← Retour aux biens
+        </Link>
+      )}
+
       {/* En-tête */}
       <div className="mt-4 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">{bien.nom}</h1>
@@ -91,9 +104,13 @@ export default function BienDetailPage() {
               {bien.sousBiens.map((chambre) => (
                 <Link key={chambre.id} href={`/dashboard/biens/${chambre.id}`}>
                   <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                    <div className="h-48 bg-slate-200 flex items-center justify-center">
-                      <span className="text-slate-400 text-sm">Image à venir</span>
-                    </div>
+                    {chambre.image ? (
+                      <img src={chambre.image} alt={chambre.nom} className="h-48 w-full object-cover" />
+                    ) : (
+                      <div className="h-48 bg-slate-200 flex items-center justify-center">
+                        <span className="text-slate-400 text-sm">Image à venir</span>
+                      </div>
+                    )}
                     <div className="p-4">
                       <h2 className="font-semibold text-lg">{chambre.nom}</h2>
                       <p className="text-gray-500 text-sm mt-1">{chambre.adresse}</p>
@@ -105,7 +122,10 @@ export default function BienDetailPage() {
           )}
 
           <div className="mt-4">
-            <Link href={`/dashboard/biens/${bien.id}/chambres/nouveau`} className="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors">
+            <Link
+              href={`/dashboard/biens/${bien.id}/chambres/nouveau`}
+              className="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+            >
               + Ajouter une chambre
             </Link>
           </div>
