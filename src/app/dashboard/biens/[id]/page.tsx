@@ -24,8 +24,21 @@ type Bien = {
   sousBiens: SousBien[]
 }
 
+type Locataire = {
+  id: number
+  nom: string
+  email: string | null
+  telephone: string | null
+  dateEntree: string
+  dateSortie: string | null
+  caution: number
+  statut: string
+  notes: string | null
+}
+
 export default function BienDetailPage() {
   const [bien, setBien] = useState<Bien | null>(null);
+  const [locataires, setLocataires] = useState<Locataire[]>([]);
   const params = useParams();
   const id = params.id;
 
@@ -36,6 +49,13 @@ export default function BienDetailPage() {
       setBien(data);
     }
     fetchBien();
+
+    async function fetchLocataire(){
+      const response = await fetch(`/api/biens/${id}/locataires`)
+      const data = await response.json();
+      setLocataires(data);
+    }
+    fetchLocataire()
   }, [id]);
 
   async function handleDelete() {
@@ -111,11 +131,47 @@ export default function BienDetailPage() {
       )}
 
       {/* Locataires */}
-      <div className="mb-8">
-        <h2 className="text-sm font-medium text-gray-700 mb-4">Locataires</h2>
-        <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
-          <p className="text-gray-400 text-sm">Aucun locataire pour le moment</p>
-        </div>
+      {/* Section Locataires */}
+      <div className="mt-6">
+        <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Locataires</h2>
+        <Link
+           href={`/dashboard/biens/${id}/locataires/nouveau`}
+           className="bg-black text-white px-4 py-2 rounded"
+        >
+            Ajouter un locataire
+        </Link>
+      </div>
+
+      {locataires.length === 0 ? (
+           <p className="text-gray-500">Aucun locataire pour le moment</p>
+      ) : (
+          <div className="grid gap-4">
+            {locataires.map((locataire) => (
+              <Link
+                key={locataire.id}
+                href={`/dashboard/locataires/${locataire.id}`}
+                className="border rounded-lg p-4 hover:bg-gray-50 flex justify-between items-center"
+              >
+                <div>
+                  <p className="font-medium">{locataire.nom}</p>
+                  <p className="text-sm text-gray-500">
+                    Entrée : {new Date(locataire.dateEntree).toLocaleDateString()}
+                  </p>
+                </div>
+                <span
+                  className={`text-sm px-2 py-1 rounded ${
+                    locataire.statut === "ACTIF"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {locataire.statut}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Section colocation : chambres + bouton ajout */}
