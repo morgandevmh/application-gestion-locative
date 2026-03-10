@@ -57,6 +57,7 @@ export default function BiensPage() {
             <Link key={bien.id} href={`/dashboard/biens/${bien.id}`}>
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 {bien.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={bien.image} alt={bien.nom} className="h-48 w-full object-cover" />
                   ) : (
                   <div className="h-48 bg-slate-200 flex items-center justify-center">

@@ -38,6 +38,19 @@ export default function BienDetailPage() {
     fetchBien();
   }, [id]);
 
+  async function handleDelete() {
+    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer ce bien ?")
+    if (!confirmed) return
+  
+    const response = await fetch(`/api/biens/${id}`, {
+      method: "DELETE"
+    })
+  
+    if (response.ok) {
+      window.location.href = "/dashboard/biens"
+    }
+  }
+
   if (!bien) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -66,6 +79,21 @@ export default function BienDetailPage() {
       )}
 
       {/* En-tête */}
+      <div className="flex gap-3 mt-4">
+        <Link
+          href={`/dashboard/biens/${bien.id}/modifier`}
+          className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+        >
+          Modifier
+        </Link>
+        <button
+           onClick={handleDelete}
+           className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-500 transition-colors"
+        >
+          Supprimer
+        </button>
+      </div>
+
       <div className="mt-4 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">{bien.nom}</h1>
         <p className="text-gray-500 mt-1">{bien.adresse}</p>
@@ -105,6 +133,7 @@ export default function BienDetailPage() {
                 <Link key={chambre.id} href={`/dashboard/biens/${chambre.id}`}>
                   <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     {chambre.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={chambre.image} alt={chambre.nom} className="h-48 w-full object-cover" />
                     ) : (
                       <div className="h-48 bg-slate-200 flex items-center justify-center">
