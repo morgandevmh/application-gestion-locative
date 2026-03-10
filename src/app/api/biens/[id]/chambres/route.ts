@@ -48,7 +48,7 @@ export async function POST(
   }
 
   // 5 Image placeholder aléatoire
-  const images = ["/placeholders/1.jpg", "/placeholders/2.jpg", "/placeholders/3.jpg", "/placeholders/4.jpg", "/placeholders/5.jpg", "/placeholders/6.jpg", "/placeholders/7.jpg"]
+  const images = ["/placeholders/1.jpg", "/placeholders/2.jpg", "/placeholders/3.jpg", "/placeholders/4.jpg", "/placeholders/5.jpg", "/placeholders/6.jpg", "/placeholders/7.jpg", "/placeholders/8.jpg","/placeholders/9.jpg", "/placeholders/10.jpg","placeholders/11.jpg", "/placeholders/12.jpg", "/placeholders/13.jpg", "/placeholders/14.jpg", "/placeholders/15.jpg", "/placeholders/16.jpg", "/placeholders/17.jpg" ]
   const randomImage = images[Math.floor(Math.random() * images.length)]
 
   try {
