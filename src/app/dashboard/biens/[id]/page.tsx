@@ -39,7 +39,7 @@ export default function BienDetailPage() {
   }, [id]);
 
   async function handleDelete() {
-    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer ce bien ?")
+    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer ce bien ? (Si c'est une colocation vous supprimerez aussi les chambres)")
     if (!confirmed) return
   
     const response = await fetch(`/api/biens/${id}`, {

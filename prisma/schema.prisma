@@ -57,7 +57,8 @@ model Bien {
   userId String
 
   parentId  Int?
-  parent    Bien?  @relation("SousBiens", fields: [parentId], references: [id])
+  
+  parent    Bien? @relation("SousBiens", fields: [parentId], references: [id], onDelete: Cascade)
   sousBiens Bien[] @relation("SousBiens")
 
   locataires Locataire[]
