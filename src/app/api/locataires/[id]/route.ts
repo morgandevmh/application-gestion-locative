@@ -38,7 +38,6 @@ export async function PUT(
           data: body,
         });
     
-        // 7. Retourner le locataire mis à jour
         return NextResponse.json(locataire, { status: 200 });
       } catch {
         return NextResponse.json(
@@ -48,4 +47,46 @@ export async function PUT(
     }
 }
 
+export async function DELETE(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+){
+
+    const session = await getSession();
+    if(!session){
+       return NextResponse.json(
+       {error: "Non autorisé"},
+       {status: 401}
+        );
+    }
+
+    const { id } = await params;
+    const locataireId = Number(id);
+
+    const existingLocataire = await prisma.locataire.findUnique({
+        where: { id: locataireId },
+        include: { bien: true },
+      });
+    
+    if (!existingLocataire || existingLocataire.bien.userId !== session.user.id) {
+        return NextResponse.json(
+          { error: "Locataire non trouvé" },
+          { status: 404 }
+        );
+    }
+
+
+    try {
+        const locataire = await prisma.locataire.delete({
+          where: { id: locataireId },
+        });
+    
+        return NextResponse.json(locataire, { status: 200 });
+      } catch {
+        return NextResponse.json(
+          { error: "Erreur lors de la supression du locataire" },
+          { status: 500 }
+        );
+    }
+}
 
