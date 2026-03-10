@@ -130,16 +130,16 @@ export default function BienDetailPage() {
         </div>
       )}
 
-      {/* Locataires */}
+      
       {/* Section Locataires */}
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Locataires</h2>
         <Link
            href={`/dashboard/biens/${id}/locataires/nouveau`}
-           className="bg-black text-white px-4 py-2 rounded"
+           className="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
         >
-            Ajouter un locataire
+          + Ajouter un locataire
         </Link>
       </div>
 

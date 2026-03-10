@@ -42,7 +42,7 @@ export default function BiensPage() {
 
       {biens.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">Vous n&aposavez pas encore de biens</p>
+          <p className="text-gray-500">Vous n&apos;avez pas encore de biens</p>
           <p className="text-gray-400 text-sm mt-2">Commencez par ajouter votre premier bien</p>
           <Link
             href="/dashboard/biens/nouveau"
