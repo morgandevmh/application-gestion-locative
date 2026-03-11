@@ -109,17 +109,24 @@ export async function DELETE(
   
     const { id } = await params
     const bienId = Number(id)
-
-    const existingBien = await prisma.bien.findUnique
-    ({ where: { id: bienId },
-      include: {sousBiens: true}
-     })
+  
+    const existingBien = await prisma.bien.findUnique({
+      where: { id: bienId },
+      include: {
+        sousBiens: {
+          include: {
+            locataires: true
+          }
+        }
+      }
+    })
+  
     if (!existingBien || existingBien.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Bien non trouvé" },
         { status: 404 }
       )
     }
-     return NextResponse.json(existingBien, { status: 200 })
-
+  
+    return NextResponse.json(existingBien, { status: 200 })
   }
