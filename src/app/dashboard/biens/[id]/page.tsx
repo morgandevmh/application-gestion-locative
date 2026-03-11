@@ -98,7 +98,11 @@ export default function BienDetailPage() {
         </Link>
       )}
 
-      {/* En-tête */}
+      {/* En-tête + image */}
+      {bien.image && (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={bien.image} alt={bien.nom} className="w-full rounded-2xl mt-4 h-64 object-cover" />
+      )}
       <div className="flex gap-3 mt-4">
         <Link
           href={`/dashboard/biens/${bien.id}/modifier`}
