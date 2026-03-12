@@ -2,7 +2,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+
 
 type Locataire = {
   id: number
@@ -24,6 +25,7 @@ export default function LocataireDetailPage() {
   const [locataire, setLocataire] = useState<Locataire | null>(null);
   const params = useParams();
   const id = params.id;
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchLocataire() {
@@ -58,12 +60,9 @@ export default function LocataireDetailPage() {
   return (
     <div className="max-w-3xl mx-auto">
       {/* Lien retour vers le bien */}
-      <Link
-        href={`/dashboard/biens/${locataire.bien.id}`}
-        className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-      >
-        ← Retour à {locataire.bien.nom}
-      </Link>
+      <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+         ← Retour
+      </button>
 
       {/* Boutons actions */}
       <div className="flex gap-3 mt-4">
