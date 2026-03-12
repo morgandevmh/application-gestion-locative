@@ -52,10 +52,10 @@ export default function BiensPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {biens.map((bien) => (
             <Link key={bien.id} href={`/dashboard/biens/${bien.id}`}>
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                 {bien.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={bien.image} alt={bien.nom} className="h-48 w-full object-cover" />
