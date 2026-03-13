@@ -4,6 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+type Locataire = {
+  id: number
+  nom: string
+  email: string | null
+  telephone: string | null
+  dateEntree: string
+  dateSortie: string | null
+  caution: number
+  statut: string
+  notes: string | null
+}
+
 type SousBien = {
   id: number
   nom: string
@@ -11,6 +23,7 @@ type SousBien = {
   type: string
   description: string | null
   image: string | null
+  locataires: Locataire[]
 }
 
 type Bien = {
@@ -26,6 +39,7 @@ type Bien = {
 
 export default function BienDetailPage() {
   const [bien, setBien] = useState<Bien | null>(null);
+  const [locataires, setLocataires] = useState<Locataire[]>([]);
   const params = useParams();
   const id = params.id;
 
@@ -36,18 +50,25 @@ export default function BienDetailPage() {
       setBien(data);
     }
     fetchBien();
+
+    async function fetchLocataires() {
+      const response = await fetch(`/api/biens/${id}/locataires`);
+      const data = await response.json();
+      setLocataires(data);
+    }
+    fetchLocataires();
   }, [id]);
 
   async function handleDelete() {
-    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer ce bien ? (Si c'est une colocation vous supprimerez aussi les chambres)")
-    if (!confirmed) return
-  
+    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer ce bien ? (Si c'est une colocation vous supprimerez aussi les chambres)");
+    if (!confirmed) return;
+
     const response = await fetch(`/api/biens/${id}`, {
-      method: "DELETE"
-    })
-  
+      method: "DELETE",
+    });
+
     if (response.ok) {
-      window.location.href = "/dashboard/biens"
+      window.location.href = "/dashboard/biens";
     }
   }
 
@@ -58,6 +79,29 @@ export default function BienDetailPage() {
       </div>
     );
   }
+
+  // calculs stats colocation
+  const isColocation = bien.type === "COLOCATION";
+
+  const tousLesLocataires = isColocation
+    ? bien.sousBiens.flatMap((chambre) => chambre.locataires)
+    : [];
+
+  const locatairesActifs = tousLesLocataires.filter(
+    (loc) => loc.statut === "ACTIF"
+  );
+
+  const nombreLocatairesActifs = locatairesActifs.length;
+
+  const sommeCautions = locatairesActifs.reduce(
+    (acc, loc) => acc + loc.caution, 0
+  );
+
+  const chambresInoccupees = isColocation
+    ? bien.sousBiens.filter(
+        (chambre) => !chambre.locataires.some((loc) => loc.statut === "ACTIF")
+      ).length
+    : 0;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -78,7 +122,11 @@ export default function BienDetailPage() {
         </Link>
       )}
 
-      {/* En-tête */}
+      {/* En-tête + image */}
+      {bien.image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={bien.image} alt={bien.nom} className="w-full rounded-2xl mt-4 h-64 object-cover" />
+      )}
       <div className="flex gap-3 mt-4">
         <Link
           href={`/dashboard/biens/${bien.id}/modifier`}
@@ -87,8 +135,8 @@ export default function BienDetailPage() {
           Modifier
         </Link>
         <button
-           onClick={handleDelete}
-           className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-500 transition-colors"
+          onClick={handleDelete}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-500 transition-colors"
         >
           Supprimer
         </button>
@@ -110,16 +158,73 @@ export default function BienDetailPage() {
         </div>
       )}
 
-      {/* Locataires */}
-      <div className="mb-8">
-        <h2 className="text-sm font-medium text-gray-700 mb-4">Locataires</h2>
-        <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
-          <p className="text-gray-400 text-sm">Aucun locataire pour le moment</p>
+      {/* CONDITIONNEL : Stats colocation OU Liste locataires */}
+      {isColocation ? (
+        <div className="mb-8">
+          <h2 className="text-sm font-medium text-gray-700 mb-4">Résumé de la colocation</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-sm text-gray-500">Locataires actifs</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{nombreLocatairesActifs}</p>
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-sm text-gray-500">Chambres inoccupées</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">
+                {chambresInoccupees} / {bien.sousBiens.length}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-sm text-gray-500">Total cautions</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{sommeCautions} €</p>
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-sm font-medium text-gray-700">Locataires</h2>
+            <Link
+              href={`/dashboard/biens/${id}/locataires/nouveau`}
+              className="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+            >
+              + Ajouter un locataire
+            </Link>
+          </div>
+
+          {locataires.length === 0 ? (
+            <p className="text-gray-500 text-sm">Aucun locataire pour le moment</p>
+          ) : (
+            <div className="grid gap-4">
+              {locataires.map((locataire) => (
+                <Link
+                  key={locataire.id}
+                  href={`/dashboard/locataires/${locataire.id}`}
+                  className="border rounded-lg p-4 hover:bg-gray-50 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium">{locataire.nom}</p>
+                    <p className="text-sm text-gray-500">
+                      Entrée : {new Date(locataire.dateEntree).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`text-sm px-2 py-1 rounded ${
+                      locataire.statut === "ACTIF"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {locataire.statut}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Section colocation : chambres + bouton ajout */}
-      {bien.type === "COLOCATION" && (
+      {isColocation && (
         <div className="mb-8">
           <h2 className="text-sm font-medium text-gray-700 mb-4">Chambres</h2>
 

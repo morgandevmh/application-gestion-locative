@@ -42,7 +42,7 @@ export default function BiensPage() {
 
       {biens.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">Vous n&aposavez pas encore de biens</p>
+          <p className="text-gray-500">Vous n&apos;avez pas encore de biens</p>
           <p className="text-gray-400 text-sm mt-2">Commencez par ajouter votre premier bien</p>
           <Link
             href="/dashboard/biens/nouveau"
@@ -52,10 +52,10 @@ export default function BiensPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {biens.map((bien) => (
             <Link key={bien.id} href={`/dashboard/biens/${bien.id}`}>
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                 {bien.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={bien.image} alt={bien.nom} className="h-48 w-full object-cover" />
