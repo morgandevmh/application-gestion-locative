@@ -73,7 +73,7 @@ export async function GET() {
       take: 5,
     });
 
-    const derniersBiens = biens.slice(0, 2);
+    const derniersBiens = biens.slice(0, 3);
 
     return NextResponse.json({
       user: { name: session.user.name },

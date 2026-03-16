@@ -1,4 +1,3 @@
-//menu dashboard
 "use client";
 
 import { useState, useEffect } from "react";
@@ -62,15 +61,20 @@ export default function DashboardPage() {
 
   if (!data) return null;
 
+  const COLORS = [
+    "#6366f1", "#8b5cf6", "#ec4899", "#f97316",
+    "#eab308", "#22c55e", "#14b8a6", "#3b82f6",
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_25%] gap-4">
+    <div className="max-w-7xl mx-auto px-4 py-4 lg:h-[calc(100vh-2rem)] lg:overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_25%] gap-3 lg:h-full">
 
         {/* Colonne gauche */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 lg:min-h-0">
 
           {/* M1 — Header */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-between">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
                 <span className="text-slate-500 text-lg">👤</span>
@@ -86,48 +90,46 @@ export default function DashboardPage() {
           </div>
 
           {/* M3 + M4 */}
-          <div className="grid grid-cols-2 md:flex gap-4 min-h-[120px]">
+          <div className="grid grid-cols-2 md:flex gap-3 shrink-0">
             {/* M4 — Taux de remplissage */}
-             <div className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center justify-center md:w-[180px]">
-               <div className="relative w-20 h-20">
-                 <svg viewBox="0 0 36 36" className="w-full h-full">
-                   {/* Cercle de fond */}
-                   <circle
-                     cx="18" cy="18" r="14"
-                     fill="none"
-                     stroke="#e5e7eb"
-                     strokeWidth="4"
-                   />
-                   {/* Cercle de progression */}
-                   <circle
-                     cx="18" cy="18" r="14"
-                     fill="none"
-                     stroke="#22c55e"
-                     strokeWidth="4"
-                     strokeDasharray={`${data.remplissage.capacite > 0 ? (data.remplissage.actifs / data.remplissage.capacite) * 87.96 : 0} 87.96`}
-                     strokeLinecap="round"
-                     transform="rotate(-90 18 18)"
-                   />
-                 </svg>
-                 <div className="absolute inset-0 flex items-center justify-center">
-                   <span className="text-sm font-bold text-gray-900">
-                     {data.remplissage.capacite > 0
-                       ? Math.round((data.remplissage.actifs / data.remplissage.capacite) * 100)
-                       : 0}%
-                   </span>
-                 </div>
-               </div>
-               <p className="text-xs text-gray-500 mt-2">Remplissage</p>
-               <p className="text-xs text-gray-400">{data.remplissage.actifs}/{data.remplissage.capacite}</p>
-             </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center justify-center md:w-[180px]">
+              <div className="relative w-20 h-20">
+                <svg viewBox="0 0 36 36" className="w-full h-full">
+                  <circle
+                    cx="18" cy="18" r="14"
+                    fill="none"
+                    stroke="#e5e7eb"
+                    strokeWidth="4"
+                  />
+                  <circle
+                    cx="18" cy="18" r="14"
+                    fill="none"
+                    stroke="#22c55e"
+                    strokeWidth="4"
+                    strokeDasharray={`${data.remplissage.capacite > 0 ? (data.remplissage.actifs / data.remplissage.capacite) * 87.96 : 0} 87.96`}
+                    strokeLinecap="round"
+                    transform="rotate(-90 18 18)"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-sm font-bold text-gray-900">
+                    {data.remplissage.capacite > 0
+                      ? Math.round((data.remplissage.actifs / data.remplissage.capacite) * 100)
+                      : 0}%
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Remplissage</p>
+              <p className="text-xs text-gray-400">{data.remplissage.actifs}/{data.remplissage.capacite}</p>
+            </div>
             {/* M3 — Générer bail */}
             <div className="md:flex-1 bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center">
-              <p className="text-sm text-gray-400">Générer un bail — Bientôt disponible</p>
+              <p className="text-sm text-gray-400">Générer un bail</p>
             </div>
           </div>
 
           {/* M5 + M6 — Résumé */}
-          <div className="bg-white rounded-lg border border-gray-200 p-3">
+          <div className="bg-white rounded-lg border border-gray-200 p-3 shrink-0">
             <div className="flex flex-col md:flex-row gap-3">
               {/* Résumé global — 70% */}
               <div className="md:flex-[7]">
@@ -167,23 +169,105 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          
+
           {/* M8 — Derniers biens */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[230px]">
-            <p className="text-sm text-gray-400">Derniers biens modifiés</p>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 flex-1 min-h-0 overflow-hidden flex flex-col">
+            <h3 className="text-sm font-medium text-gray-700 mb-3 shrink-0">Derniers biens modifiés</h3>
+            <div className="grid grid-cols-3 gap-3 flex-1 min-h-0">
+              {data.derniersBiens.length === 0 ? (
+                <p className="text-sm text-gray-400">Aucun bien</p>
+              ) : (
+                data.derniersBiens.map((bien) => (
+                  <div
+                    key={bien.id}
+                    onClick={() => router.push(`/dashboard/biens/${bien.id}`)}
+                    className="rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors overflow-hidden flex flex-col"
+                  >
+                    <div className="flex-1 min-h-0 bg-gray-100">
+                      {bien.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={bien.image} alt={bien.nom} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          Pas d&apos;image
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2 shrink-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{bien.nom}</p>
+                      <p className="text-xs text-gray-500 truncate">{bien.adresse}</p>
+                      <span className="text-xs text-gray-400">
+                        {bien.type === "APPARTEMENT" && "Appartement"}
+                        {bien.type === "MAISON" && "Maison"}
+                        {bien.type === "STUDIO" && "Studio"}
+                        {bien.type === "COLOCATION" && "Colocation"}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
+
         </div>
 
         {/* Colonne droite */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 lg:min-h-0">
           {/* M2 — Calendrier */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center min-h-[240px]">
-            <p className="text-sm text-gray-400">Calendrier </p>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center shrink-0 lg:flex-[30]">
+            <p className="text-sm text-gray-400">Calendrier</p>
           </div>
 
           {/* M7 — Derniers locataires */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[360px]">
-            <p className="text-sm text-gray-400">Derniers locataires modifiés</p>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 lg:flex-[70] min-h-0 overflow-hidden">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Derniers locataires modifiés</h3>
+            <div className="flex flex-col gap-2">
+              {data.derniersLocataires.length === 0 ? (
+                <p className="text-sm text-gray-400">Aucun locataire</p>
+              ) : (
+                data.derniersLocataires.map((locataire) => {
+                  const colorIndex = locataire.nom
+                    .split("")
+                    .reduce((sum, char) => sum + char.charCodeAt(0), 0) % COLORS.length;
+                  const initiales = locataire.nom
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2);
+                  const nomBien =
+                    locataire.bien.parent
+                      ? `${locataire.bien.parent.nom} — ${locataire.bien.nom}`
+                      : locataire.bien.nom;
+
+                  return (
+                    <div
+                      key={locataire.id}
+                      onClick={() => router.push(`/dashboard/locataires/${locataire.id}`)}
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium shrink-0"
+                        style={{ backgroundColor: COLORS[colorIndex] }}
+                      >
+                        {initiales}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 truncate">{locataire.nom}</p>
+                        <p className="text-xs text-gray-500 truncate">{nomBien}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
+                        locataire.statut === "ACTIF"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-600"
+                      }`}>
+                        {locataire.statut === "ACTIF" ? "Actif" : "Sorti"}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
 
