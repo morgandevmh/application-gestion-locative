@@ -1,3 +1,4 @@
+//menu dashboard
 "use client";
 
 import { useState, useEffect } from "react";
@@ -63,7 +64,7 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_40%] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_25%] gap-4">
 
         {/* Colonne gauche */}
         <div className="flex flex-col gap-4">
@@ -85,29 +86,90 @@ export default function DashboardPage() {
           </div>
 
           {/* M3 + M4 */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:flex gap-4 min-h-[120px]">
+            {/* M4 — Taux de remplissage */}
+             <div className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center justify-center md:w-[180px]">
+               <div className="relative w-20 h-20">
+                 <svg viewBox="0 0 36 36" className="w-full h-full">
+                   {/* Cercle de fond */}
+                   <circle
+                     cx="18" cy="18" r="14"
+                     fill="none"
+                     stroke="#e5e7eb"
+                     strokeWidth="4"
+                   />
+                   {/* Cercle de progression */}
+                   <circle
+                     cx="18" cy="18" r="14"
+                     fill="none"
+                     stroke="#22c55e"
+                     strokeWidth="4"
+                     strokeDasharray={`${data.remplissage.capacite > 0 ? (data.remplissage.actifs / data.remplissage.capacite) * 87.96 : 0} 87.96`}
+                     strokeLinecap="round"
+                     transform="rotate(-90 18 18)"
+                   />
+                 </svg>
+                 <div className="absolute inset-0 flex items-center justify-center">
+                   <span className="text-sm font-bold text-gray-900">
+                     {data.remplissage.capacite > 0
+                       ? Math.round((data.remplissage.actifs / data.remplissage.capacite) * 100)
+                       : 0}%
+                   </span>
+                 </div>
+               </div>
+               <p className="text-xs text-gray-500 mt-2">Remplissage</p>
+               <p className="text-xs text-gray-400">{data.remplissage.actifs}/{data.remplissage.capacite}</p>
+             </div>
             {/* M3 — Générer bail */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center min-h-[120px]">
+            <div className="md:flex-1 bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center">
               <p className="text-sm text-gray-400">Générer un bail — Bientôt disponible</p>
             </div>
-            {/* M4 — Taux de remplissage */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center min-h-[120px]">
-              <p className="text-sm text-gray-400">Taux de remplissage</p>
+          </div>
+
+          {/* M5 + M6 — Résumé */}
+          <div className="bg-white rounded-lg border border-gray-200 p-3">
+            <div className="flex flex-col md:flex-row gap-3">
+              {/* Résumé global — 70% */}
+              <div className="md:flex-[7]">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Résumé global</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="text-center">
+                    <p className="text-xl font-bold text-gray-900">{data.resumeGlobal.totalBiens}</p>
+                    <p className="text-xs text-gray-500">Biens</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl font-bold text-gray-900">{data.resumeGlobal.totalLocataires}</p>
+                    <p className="text-xs text-gray-500">Locataires</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl font-bold text-gray-900">{data.resumeGlobal.totalCautions.toLocaleString()}&nbsp;€</p>
+                    <p className="text-xs text-gray-500">Cautions</p>
+                  </div>
+                </div>
+              </div>
+              {/* Patrimoine — 30% */}
+              <div className="md:flex-[3] border-t md:border-t-0 md:border-l border-gray-200 pt-3 md:pt-0 md:pl-3">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Patrimoine</h3>
+                <div className="flex flex-col gap-1">
+                  {Object.entries(data.patrimoine).map(([type, count]) => (
+                    <div key={type} className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">
+                        {type === "APPARTEMENT" && "Appartement"}
+                        {type === "MAISON" && "Maison"}
+                        {type === "STUDIO" && "Studio"}
+                        {type === "COLOCATION" && "Colocation"}
+                        {count > 1 ? "s" : ""}
+                      </span>
+                      <span className="text-sm font-medium text-gray-900">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* M5 — Résumé patrimoine */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[100px]">
-            <p className="text-sm text-gray-400">Résumé patrimoine</p>
-          </div>
-
-          {/* M6 — Résumé global */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[100px]">
-            <p className="text-sm text-gray-400">Résumé global</p>
-          </div>
-
+          
           {/* M8 — Derniers biens */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[140px]">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[230px]">
             <p className="text-sm text-gray-400">Derniers biens modifiés</p>
           </div>
         </div>
@@ -115,12 +177,12 @@ export default function DashboardPage() {
         {/* Colonne droite */}
         <div className="flex flex-col gap-4">
           {/* M2 — Calendrier */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center min-h-[280px]">
-            <p className="text-sm text-gray-400">Calendrier — Bientôt disponible</p>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center min-h-[240px]">
+            <p className="text-sm text-gray-400">Calendrier </p>
           </div>
 
           {/* M7 — Derniers locataires */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[300px]">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[360px]">
             <p className="text-sm text-gray-400">Derniers locataires modifiés</p>
           </div>
         </div>
