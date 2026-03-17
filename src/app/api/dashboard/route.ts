@@ -42,35 +42,37 @@ export async function GET() {
       {} as Record<string, number>
     );
 
-    let totalCapacite = 0;
-    let totalActifs = 0;
+    let totalBiensLouables = 0;
+    let totalBiensLoues = 0;
 
     biens.forEach((bien) => {
       if (bien.type === "COLOCATION") {
         bien.sousBiens.forEach((chambre) => {
-          totalCapacite += chambre.capacite;
-          totalActifs += chambre.locataires.filter(
+          totalBiensLouables += 1;
+          const aUnLocataireActif = chambre.locataires.some(
             (loc) => loc.statut === "ACTIF"
-          ).length;
+          );
+          if (aUnLocataireActif) totalBiensLoues += 1;
         });
       } else {
-        totalCapacite += bien.capacite;
-        totalActifs += bien.locataires.filter(
+        totalBiensLouables += 1;
+        const aUnLocataireActif = bien.locataires.some(
           (loc) => loc.statut === "ACTIF"
-        ).length;
+        );
+        if (aUnLocataireActif) totalBiensLoues += 1;
       }
     });
 
     const remplissage = {
-      capacite: totalCapacite,
-      actifs: totalActifs,
+      total: totalBiensLouables,
+      loues: totalBiensLoues,
     };
 
     const derniersLocataires = await prisma.locataire.findMany({
       where: { bien: { userId } },
       include: { bien: { include: { parent: true } } },
       orderBy: { updatedAt: "desc" },
-      take: 5,
+      take: 6,
     });
 
     const derniersBiens = biens.slice(0, 3);
@@ -83,7 +85,7 @@ export async function GET() {
       derniersLocataires,
       derniersBiens,
     });
-  }  catch (error) {
+  } catch (error) {
     console.error("Dashboard API error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }

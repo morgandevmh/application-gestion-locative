@@ -7,7 +7,7 @@ type DashboardData = {
   user: { name: string };
   resumeGlobal: { totalBiens: number; totalLocataires: number; totalCautions: number };
   patrimoine: Record<string, number>;
-  remplissage: { capacite: number; actifs: number };
+  remplissage: { total: number; loues: number };
   derniersLocataires: {
     id: number;
     nom: string;
@@ -48,7 +48,7 @@ export default function DashboardPage() {
 
   async function handleLogout() {
     await fetch("/api/auth/sign-out", { method: "POST" });
-    router.push("/");
+    router.push("/connexion");
   }
 
   if (loading) {
@@ -106,21 +106,21 @@ export default function DashboardPage() {
                     fill="none"
                     stroke="#22c55e"
                     strokeWidth="4"
-                    strokeDasharray={`${data.remplissage.capacite > 0 ? (data.remplissage.actifs / data.remplissage.capacite) * 87.96 : 0} 87.96`}
+                    strokeDasharray={`${data.remplissage.total > 0 ? (data.remplissage.loues / data.remplissage.total) * 87.96 : 0} 87.96`}
                     strokeLinecap="round"
                     transform="rotate(-90 18 18)"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-sm font-bold text-gray-900">
-                    {data.remplissage.capacite > 0
-                      ? Math.round((data.remplissage.actifs / data.remplissage.capacite) * 100)
+                    {data.remplissage.total > 0
+                      ? Math.round((data.remplissage.loues / data.remplissage.total) * 100)
                       : 0}%
                   </span>
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-2">Remplissage</p>
-              <p className="text-xs text-gray-400">{data.remplissage.actifs}/{data.remplissage.capacite}</p>
+              <p className="text-xs text-gray-400">{data.remplissage.loues}/{data.remplissage.total}</p>
             </div>
             {/* M3 — Générer bail */}
             <div className="md:flex-1 bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center">
@@ -221,7 +221,7 @@ export default function DashboardPage() {
           {/* M7 — Derniers locataires */}
           <div className="bg-white rounded-lg border border-gray-200 p-4 lg:flex-[70] min-h-0 overflow-hidden">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Derniers locataires modifiés</h3>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               {data.derniersLocataires.length === 0 ? (
                 <p className="text-sm text-gray-400">Aucun locataire</p>
               ) : (
