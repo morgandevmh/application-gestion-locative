@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type Locataire = {
   id: number
@@ -42,6 +42,7 @@ export default function BienDetailPage() {
   const [locataires, setLocataires] = useState<Locataire[]>([]);
   const params = useParams();
   const id = params.id;
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchBien() {
@@ -114,12 +115,9 @@ export default function BienDetailPage() {
           ← Retour à la colocation
         </Link>
       ) : (
-        <Link
-          href="/dashboard/biens"
-          className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          ← Retour aux biens
-        </Link>
+        <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          ← Retour
+       </button>
       )}
 
       {/* En-tête + image */}

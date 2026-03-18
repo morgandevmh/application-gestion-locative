@@ -59,7 +59,7 @@ export default function LocataireDetailPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Lien retour vers le bien */}
+      {/* Lien retour */}
       <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
          ← Retour
       </button>
