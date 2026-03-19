@@ -1,8 +1,93 @@
-
 @import 'tailwindcss';
-/* Light mode */
 
+/* Tailwind v4 — @theme mapping*/
+@theme {
+  /* — Couleurs texte → text-primary, text-secondary, text-tertiary — */
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
 
+  /* — Surfaces → bg-background, bg-surface, bg-surface-elevated — */
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+
+  /* — Bordures → border-border, border-border-hover — */
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+
+  /* — Mini palette → bg-blue-pastel, text-blue-text, etc. — */
+  --color-blue: var(--color-blue);
+  --color-blue-pastel: var(--color-blue-pastel);
+  --color-blue-text: var(--color-blue-text);
+  --color-green: var(--color-green);
+  --color-green-pastel: var(--color-green-pastel);
+  --color-green-text: var(--color-green-text);
+  --color-amber: var(--color-amber);
+  --color-amber-pastel: var(--color-amber-pastel);
+  --color-amber-text: var(--color-amber-text);
+  --color-red: var(--color-red);
+  --color-red-pastel: var(--color-red-pastel);
+  --color-red-text: var(--color-red-text);
+  --color-violet: var(--color-violet);
+  --color-violet-pastel: var(--color-violet-pastel);
+  --color-violet-text: var(--color-violet-text);
+  --color-cyan: var(--color-cyan);
+  --color-cyan-pastel: var(--color-cyan-pastel);
+  --color-cyan-text: var(--color-cyan-text);
+
+  /* — Glass → bg-glass-light, border-glass-border, etc. — */
+  --color-glass-subtle: var(--glass-subtle);
+  --color-glass-light: var(--glass-light);
+  --color-glass-medium: var(--glass-medium);
+  --color-glass-strong: var(--glass-strong);
+  --color-glass-overlay: var(--glass-overlay);
+  --color-glass-accent: var(--glass-accent);
+  --color-glass-border: var(--glass-border);
+  --color-glass-border-hover: var(--glass-border-hover);
+  --color-glass-accent-border: var(--glass-accent-border);
+
+  /* — Glass on gradient — */
+  --color-glass-on-gradient: var(--glass-on-gradient);
+  --color-glass-on-gradient-hover: var(--glass-on-gradient-hover);
+  --color-glass-on-gradient-border: var(--glass-on-gradient-border);
+
+  /* — Fonts → font-heading, font-body — */
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+
+  /* — Border radius → rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-full — */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
+
+  /* — Shadows → shadow-xs, shadow-sm, shadow-md, shadow-lg, shadow-xl — */
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+
+  /* — Spacing → p-1 (4px), p-2 (8px), p-3 (12px), etc. — */
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+}
+
+/* Light mode — CSS Variables  */
 :root {
   /* Palette principale */
   --text: #1c1c1e;
@@ -79,14 +164,14 @@
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows  */
+  /* Shadows */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.10);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.14);
 
-  /* transitions  */
+  /* Transitions */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 0.12s;
   --duration-normal: 0.2s;
@@ -96,13 +181,12 @@
   --font-heading: 'Roboto', sans-serif;
   --font-body: 'Atkinson Hyperlegible Next', sans-serif;
 
-  /*  Sidebar  */
+  /* Layout */
   --sidebar-width: 256px;
   --navbar-height: 56px;
 }
 
 /* Base resets & defaults */
-
 * {
   box-sizing: border-box;
 }

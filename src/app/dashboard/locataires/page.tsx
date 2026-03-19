@@ -5,12 +5,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const COLORS: { bg: string; text: string }[] = [
-  { bg: "var(--color-blue-pastel)", text: "var(--color-blue-text)" },
-  { bg: "var(--color-violet-pastel)", text: "var(--color-violet-text)" },
-  { bg: "var(--color-green-pastel)", text: "var(--color-green-text)" },
-  { bg: "var(--color-amber-pastel)", text: "var(--color-amber-text)" },
-  { bg: "var(--color-red-pastel)", text: "var(--color-red-text)" },
-  { bg: "var(--color-cyan-pastel)", text: "var(--color-cyan-text)" },
+  { bg: "bg-blue-pastel", text: "text-blue-text" },
+  { bg: "bg-violet-pastel", text: "text-violet-text" },
+  { bg: "bg-green-pastel", text: "text-green-text" },
+  { bg: "bg-amber-pastel", text: "text-amber-text" },
+  { bg: "bg-red-pastel", text: "text-red-text" },
+  { bg: "bg-cyan-pastel", text: "text-cyan-text" },
 ];
 
 function getColor(nom: string) {
@@ -91,59 +91,29 @@ export default function LocatairesPage() {
 
   if (loading) {
     return (
-      <div
-        className="flex items-center justify-center"
-        style={{ height: 256 }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: 14,
-            color: "var(--text-secondary)",
-          }}
-        >
-          Chargement...
-        </p>
+      <div className="flex items-center justify-center h-64">
+        <p className="font-body text-sm text-text-secondary">Chargement...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto" }}>
+    <div className="max-w-[960px] mx-auto">
       {/* En-tête */}
-      <div
-        className="flex justify-between items-center"
-        style={{ marginBottom: "var(--space-6)" }}
-      >
-        <h1
-          style={{
-            fontFamily: "var(--font-heading)",
-            fontWeight: 700,
-            fontSize: 28,
-            lineHeight: "34px",
-            letterSpacing: "-0.02em",
-            color: "var(--text)",
-          }}
-        >
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="font-heading font-bold text-[28px] leading-[34px] tracking-[-0.02em] text-text">
           Locataires
         </h1>
         {locataires.length > 0 && (
-          <span
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 13,
-              color: "var(--text-tertiary)",
-            }}
-          >
+          <span className="font-body text-[13px] text-text-tertiary">
             {locatairesFiltres.length} résultat{locatairesFiltres.length !== 1 ? "s" : ""}
           </span>
         )}
       </div>
 
       {/* Barre de recherche */}
-      <div style={{ marginBottom: "var(--space-5)" }}>
-        <div style={{ position: "relative", maxWidth: 360 }}>
-          {/* Icône loupe */}
+      <div className="mb-5">
+        <div className="relative max-w-[360px]">
           <svg
             width="16"
             height="16"
@@ -153,13 +123,7 @@ export default function LocatairesPage() {
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={{
-              position: "absolute",
-              left: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-              pointerEvents: "none",
-            }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
           >
             <circle cx="7" cy="7" r="5" />
             <path d="M11 11l3.5 3.5" />
@@ -172,170 +136,50 @@ export default function LocatairesPage() {
               setRecherche(e.target.value);
               setPageActuelle(1);
             }}
-            style={{
-              width: "100%",
-              border: "1.5px solid var(--border)",
-              borderRadius: "var(--radius-md)",
-              padding: "10px 12px 10px 36px",
-              fontSize: 14,
-              fontFamily: "var(--font-body)",
-              color: "var(--text)",
-              background: "var(--surface-elevated)",
-              outline: "none",
-              transition: `border-color var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out)`,
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = "var(--accent)";
-              e.currentTarget.style.boxShadow = "0 0 0 3px var(--glass-accent)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            className="w-full border-[1.5px] border-border rounded-md bg-surface-elevated pl-9 pr-3 py-[10px] text-sm font-body text-text outline-none transition-all duration-200 focus:border-accent focus:ring-3 focus:ring-glass-accent"
           />
         </div>
       </div>
 
       {/* État vide */}
       {locataires.length === 0 ? (
-        <div
-          style={{
-            background: "var(--surface-elevated)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--border)",
-            padding: "var(--space-12) var(--space-6)",
-            textAlign: "center",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 14,
-              color: "var(--text-tertiary)",
-            }}
-          >
+        <div className="bg-surface-elevated rounded-lg border border-border py-12 px-6 text-center">
+          <p className="font-body text-sm text-text-tertiary">
             Aucun locataire pour le moment
           </p>
         </div>
       ) : locatairesFiltres.length === 0 ? (
-        <div
-          style={{
-            background: "var(--surface-elevated)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--border)",
-            padding: "var(--space-12) var(--space-6)",
-            textAlign: "center",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 14,
-              color: "var(--text-tertiary)",
-            }}
-          >
+        <div className="bg-surface-elevated rounded-lg border border-border py-12 px-6 text-center">
+          <p className="font-body text-sm text-text-tertiary">
             Aucun résultat pour &quot;{recherche}&quot;
           </p>
         </div>
       ) : (
         <>
           {/* En-têtes desktop */}
-          <div
-            className="hidden md:flex items-center"
-            style={{
-              gap: "var(--space-4)",
-              padding: "0 var(--space-5)",
-              marginBottom: "var(--space-2)",
-            }}
-          >
-            <div
-              style={{
-                width: 32,
-                fontFamily: "var(--font-heading)",
-                fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: "var(--text-tertiary)",
-              }}
-            >
+          <div className="hidden md:flex items-center gap-4 px-5 mb-2">
+            <div className="w-8 font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               #
             </div>
-            <div
-              style={{
-                flex: 1,
-                fontFamily: "var(--font-heading)",
-                fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: "var(--text-tertiary)",
-              }}
-            >
+            <div className="flex-1 font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Locataire
             </div>
-            <div
-              style={{
-                flex: 1,
-                fontFamily: "var(--font-heading)",
-                fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: "var(--text-tertiary)",
-              }}
-            >
+            <div className="flex-1 font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Bien
             </div>
-            <div
-              style={{
-                width: 96,
-                fontFamily: "var(--font-heading)",
-                fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: "var(--text-tertiary)",
-              }}
-            >
+            <div className="w-24 font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Entrée
             </div>
-            <div
-              style={{
-                width: 96,
-                fontFamily: "var(--font-heading)",
-                fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: "var(--text-tertiary)",
-              }}
-            >
+            <div className="w-24 font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Sortie
             </div>
-            <div
-              style={{
-                width: 80,
-                fontFamily: "var(--font-heading)",
-                fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: "var(--text-tertiary)",
-              }}
-            >
+            <div className="w-20 font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Statut
             </div>
           </div>
 
           {/* Liste */}
-          <div style={{ display: "grid", gap: "var(--space-2)" }}>
+          <div className="grid gap-2">
             {locatairesPage.map((locataire, index) => {
               const color = getColor(locataire.nom);
               return (
@@ -344,109 +188,40 @@ export default function LocatairesPage() {
                   onClick={() =>
                     router.push(`/dashboard/locataires/${locataire.id}`)
                   }
-                  style={{
-                    background: "var(--surface-elevated)",
-                    borderRadius: "var(--radius-lg)",
-                    border: "1px solid var(--border)",
-                    padding: "var(--space-4) var(--space-5)",
-                    cursor: "pointer",
-                    transition: `border-color var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out)`,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--border-hover)";
-                    e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.04)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "var(--border)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
+                  className="bg-surface-elevated rounded-lg border border-border px-5 py-4 cursor-pointer transition-all duration-200 hover:border-border-hover hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
                 >
                   {/* Version mobile */}
-                  <div className="md:hidden flex items-center" style={{ gap: "var(--space-3)" }}>
+                  <div className="md:hidden flex items-center gap-3">
                     <div
-                      className="flex items-center justify-center shrink-0"
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "var(--radius-full)",
-                        background: color.bg,
-                        color: color.text,
-                        fontFamily: "var(--font-heading)",
-                        fontWeight: 700,
-                        fontSize: 13,
-                      }}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-heading font-bold text-[13px] ${color.bg} ${color.text}`}
                     >
                       {getInitiales(locataire.nom)}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p
-                        className="truncate"
-                        style={{
-                          fontFamily: "var(--font-heading)",
-                          fontWeight: 500,
-                          fontSize: 15,
-                          lineHeight: "20px",
-                          color: "var(--text)",
-                          margin: 0,
-                        }}
-                      >
+                      <p className="truncate font-heading font-medium text-[15px] leading-5 text-text m-0">
                         {locataire.nom}
                       </p>
-                      <p
-                        className="truncate"
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: 13,
-                          lineHeight: "20px",
-                          color: "var(--text-secondary)",
-                          margin: 0,
-                        }}
-                      >
+                      <p className="truncate font-body text-[13px] leading-5 text-text-secondary m-0">
                         {getNomBien(locataire.bien)}
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-end shrink-0" style={{ gap: "var(--space-1)" }}>
+                    <div className="flex flex-col items-end shrink-0 gap-1">
                       <span
-                        style={{
-                          display: "inline-block",
-                          padding: "3px 10px",
-                          borderRadius: "var(--radius-full)",
-                          fontFamily: "var(--font-body)",
-                          fontWeight: 700,
-                          fontSize: 11,
-                          background:
-                            locataire.statut === "ACTIF"
-                              ? "var(--color-green-pastel)"
-                              : "var(--surface)",
-                          color:
-                            locataire.statut === "ACTIF"
-                              ? "var(--color-green-text)"
-                              : "var(--text-secondary)",
-                        }}
+                        className={`inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] ${
+                          locataire.statut === "ACTIF"
+                            ? "bg-green-pastel text-green-text"
+                            : "bg-surface text-text-secondary"
+                        }`}
                       >
                         {locataire.statut}
                       </span>
-                      <span
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: 12,
-                          lineHeight: "16px",
-                          color: "var(--text-tertiary)",
-                        }}
-                      >
+                      <span className="font-body text-xs leading-4 text-text-tertiary">
                         {new Date(locataire.dateEntree).toLocaleDateString()}
                       </span>
                       {locataire.dateSortie && (
-                        <span
-                          style={{
-                            fontFamily: "var(--font-body)",
-                            fontSize: 12,
-                            lineHeight: "16px",
-                            color: "var(--text-tertiary)",
-                          }}
-                        >
+                        <span className="font-body text-xs leading-4 text-text-tertiary">
                           → {new Date(locataire.dateSortie).toLocaleDateString()}
                         </span>
                       )}
@@ -454,120 +229,48 @@ export default function LocatairesPage() {
                   </div>
 
                   {/* Version desktop */}
-                  <div
-                    className="hidden md:flex items-center"
-                    style={{ gap: "var(--space-4)" }}
-                  >
-                    <div
-                      style={{
-                        width: 32,
-                        fontFamily: "var(--font-body)",
-                        fontSize: 13,
-                        color: "var(--text-tertiary)",
-                      }}
-                    >
+                  <div className="hidden md:flex items-center gap-4">
+                    <div className="w-8 font-body text-[13px] text-text-tertiary">
                       {(pageActuelle - 1) * PAR_PAGE + index + 1}
                     </div>
 
-                    <div
-                      className="flex-1 flex items-center"
-                      style={{ gap: "var(--space-3)" }}
-                    >
+                    <div className="flex-1 flex items-center gap-3">
                       <div
-                        className="flex items-center justify-center shrink-0"
-                        style={{
-                          width: 34,
-                          height: 34,
-                          borderRadius: "var(--radius-full)",
-                          background: color.bg,
-                          color: color.text,
-                          fontFamily: "var(--font-heading)",
-                          fontWeight: 700,
-                          fontSize: 12,
-                        }}
+                        className={`w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0 font-heading font-bold text-xs ${color.bg} ${color.text}`}
                       >
                         {getInitiales(locataire.nom)}
                       </div>
-                      <span
-                        style={{
-                          fontFamily: "var(--font-heading)",
-                          fontWeight: 500,
-                          fontSize: 15,
-                          lineHeight: "20px",
-                          color: "var(--text)",
-                        }}
-                      >
+                      <span className="font-heading font-medium text-[15px] leading-5 text-text">
                         {locataire.nom}
                       </span>
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p
-                        className="truncate"
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: 14,
-                          color: "var(--text)",
-                          margin: 0,
-                        }}
-                      >
+                      <p className="truncate font-body text-sm text-text m-0">
                         {getNomBien(locataire.bien)}
                       </p>
-                      <p
-                        className="truncate"
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: 12,
-                          color: "var(--text-tertiary)",
-                          margin: 0,
-                        }}
-                      >
+                      <p className="truncate font-body text-xs text-text-tertiary m-0">
                         {locataire.bien.adresse}
                       </p>
                     </div>
 
-                    <div
-                      style={{
-                        width: 96,
-                        fontFamily: "var(--font-body)",
-                        fontSize: 13,
-                        color: "var(--text-secondary)",
-                      }}
-                    >
+                    <div className="w-24 font-body text-[13px] text-text-secondary">
                       {new Date(locataire.dateEntree).toLocaleDateString()}
                     </div>
 
-                    <div
-                      style={{
-                        width: 96,
-                        fontFamily: "var(--font-body)",
-                        fontSize: 13,
-                        color: "var(--text-secondary)",
-                      }}
-                    >
+                    <div className="w-24 font-body text-[13px] text-text-secondary">
                       {locataire.dateSortie
                         ? new Date(locataire.dateSortie).toLocaleDateString()
                         : "—"}
                     </div>
 
-                    <div style={{ width: 80 }}>
+                    <div className="w-20">
                       <span
-                        style={{
-                          display: "inline-block",
-                          padding: "3px 10px",
-                          borderRadius: "var(--radius-full)",
-                          fontFamily: "var(--font-body)",
-                          fontWeight: 700,
-                          fontSize: 11,
-                          background:
-                            locataire.statut === "ACTIF"
-                              ? "var(--color-green-pastel)"
-                              : "var(--surface)",
-                          color:
-                            locataire.statut === "ACTIF"
-                              ? "var(--color-green-text)"
-                              : "var(--text-secondary)",
-                        }}
+                        className={`inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] ${
+                          locataire.statut === "ACTIF"
+                            ? "bg-green-pastel text-green-text"
+                            : "bg-surface text-text-secondary"
+                        }`}
                       >
                         {locataire.statut}
                       </span>
@@ -580,28 +283,11 @@ export default function LocatairesPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div
-              className="flex justify-center items-center"
-              style={{
-                gap: "var(--space-2)",
-                marginTop: "var(--space-8)",
-              }}
-            >
+            <div className="flex justify-center items-center gap-2 mt-8">
               <button
                 onClick={() => setPageActuelle(pageActuelle - 1)}
                 disabled={pageActuelle === 1}
-                style={{
-                  padding: "7px 12px",
-                  fontSize: 14,
-                  fontFamily: "var(--font-body)",
-                  color: pageActuelle === 1 ? "var(--text-tertiary)" : "var(--text-secondary)",
-                  background: "transparent",
-                  border: "none",
-                  cursor: pageActuelle === 1 ? "not-allowed" : "pointer",
-                  opacity: pageActuelle === 1 ? 0.4 : 1,
-                  borderRadius: "var(--radius-md)",
-                  transition: `color var(--duration-fast) var(--ease-out)`,
-                }}
+                className="px-3 py-[7px] text-sm font-body text-text-secondary rounded-md border-none bg-transparent cursor-pointer disabled:text-text-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-100"
               >
                 ←
               </button>
@@ -611,20 +297,11 @@ export default function LocatairesPage() {
                   <button
                     key={page}
                     onClick={() => setPageActuelle(page)}
-                    style={{
-                      padding: "7px 14px",
-                      fontSize: 14,
-                      fontFamily: "var(--font-body)",
-                      fontWeight: page === pageActuelle ? 700 : 400,
-                      color:
-                        page === pageActuelle ? "#ffffff" : "var(--text-secondary)",
-                      background:
-                        page === pageActuelle ? "var(--primary)" : "transparent",
-                      border: "none",
-                      borderRadius: "var(--radius-md)",
-                      cursor: "pointer",
-                      transition: `all var(--duration-fast) var(--ease-out)`,
-                    }}
+                    className={`px-[14px] py-[7px] text-sm font-body rounded-md border-none cursor-pointer transition-all duration-100 ${
+                      page === pageActuelle
+                        ? "bg-primary text-white font-bold"
+                        : "bg-transparent text-text-secondary font-normal"
+                    }`}
                   >
                     {page}
                   </button>
@@ -634,21 +311,7 @@ export default function LocatairesPage() {
               <button
                 onClick={() => setPageActuelle(pageActuelle + 1)}
                 disabled={pageActuelle === totalPages}
-                style={{
-                  padding: "7px 12px",
-                  fontSize: 14,
-                  fontFamily: "var(--font-body)",
-                  color:
-                    pageActuelle === totalPages
-                      ? "var(--text-tertiary)"
-                      : "var(--text-secondary)",
-                  background: "transparent",
-                  border: "none",
-                  cursor: pageActuelle === totalPages ? "not-allowed" : "pointer",
-                  opacity: pageActuelle === totalPages ? 0.4 : 1,
-                  borderRadius: "var(--radius-md)",
-                  transition: `color var(--duration-fast) var(--ease-out)`,
-                }}
+                className="px-3 py-[7px] text-sm font-body text-text-secondary rounded-md border-none bg-transparent cursor-pointer disabled:text-text-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-100"
               >
                 →
               </button>

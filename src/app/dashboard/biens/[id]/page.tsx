@@ -1,40 +1,53 @@
 // page details biens + condition pour colocation
 "use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
 type Locataire = {
-  id: number
-  nom: string
-  email: string | null
-  telephone: string | null
-  dateEntree: string
-  dateSortie: string | null
-  caution: number
-  statut: string
-  notes: string | null
-}
+  id: number;
+  nom: string;
+  email: string | null;
+  telephone: string | null;
+  dateEntree: string;
+  dateSortie: string | null;
+  caution: number;
+  statut: string;
+  notes: string | null;
+};
 
 type SousBien = {
-  id: number
-  nom: string
-  adresse: string
-  type: string
-  description: string | null
-  image: string | null
-  locataires: Locataire[]
-}
+  id: number;
+  nom: string;
+  adresse: string;
+  type: string;
+  description: string | null;
+  image: string | null;
+  locataires: Locataire[];
+};
 
 type Bien = {
-  id: number
-  nom: string
-  adresse: string
-  type: string
-  description: string | null
-  image: string | null
-  parentId: number | null
-  sousBiens: SousBien[]
+  id: number;
+  nom: string;
+  adresse: string;
+  type: string;
+  description: string | null;
+  image: string | null;
+  parentId: number | null;
+  sousBiens: SousBien[];
+};
+
+const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  APPARTEMENT: { bg: "bg-blue-pastel", text: "text-blue-text" },
+  MAISON: { bg: "bg-green-pastel", text: "text-green-text" },
+  STUDIO: { bg: "bg-violet-pastel", text: "text-violet-text" },
+  COLOCATION: { bg: "bg-amber-pastel", text: "text-amber-text" },
+  CHAMBRE: { bg: "bg-cyan-pastel", text: "text-cyan-text" },
+};
+
+function getTypeColor(type: string) {
+  return TYPE_COLORS[type] || { bg: "bg-surface", text: "text-text-secondary" };
 }
 
 export default function BienDetailPage() {
@@ -60,7 +73,9 @@ export default function BienDetailPage() {
   }, [id]);
 
   async function handleDelete() {
-    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer ce bien ? (Si c'est une colocation vous supprimerez aussi les chambres)");
+    const confirmed = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer ce bien ? (Si c'est une colocation vous supprimerez aussi les chambres)"
+    );
     if (!confirmed) return;
 
     const response = await fetch(`/api/biens/${id}`, {
@@ -75,13 +90,13 @@ export default function BienDetailPage() {
   if (!bien) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">Chargement...</p>
+        <p className="font-body text-sm text-text-secondary">Chargement...</p>
       </div>
     );
   }
 
-  // calculs stats colocation
   const isColocation = bien.type === "COLOCATION";
+  const typeColor = getTypeColor(bien.type);
 
   const tousLesLocataires = isColocation
     ? bien.sousBiens.flatMap((chambre) => chambre.locataires)
@@ -94,7 +109,8 @@ export default function BienDetailPage() {
   const nombreLocatairesActifs = locatairesActifs.length;
 
   const sommeCautions = locatairesActifs.reduce(
-    (acc, loc) => acc + loc.caution, 0
+    (acc, loc) => acc + loc.caution,
+    0
   );
 
   const chambresInoccupees = isColocation
@@ -104,114 +120,242 @@ export default function BienDetailPage() {
     : 0;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-[720px] mx-auto">
       {/* Navigation retour */}
       {bien.parentId ? (
         <Link
           href={`/dashboard/biens/${bien.parentId}`}
-          className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-1 font-body text-sm text-text-secondary no-underline transition-colors duration-200 hover:text-text"
         >
-          ← Retour à la colocation
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M10 12L6 8l4-4" />
+          </svg>
+          Retour à la colocation
         </Link>
       ) : (
         <Link
           href="/dashboard/biens"
-          className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-1 font-body text-sm text-text-secondary no-underline transition-colors duration-200 hover:text-text"
         >
-          ← Retour aux biens
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M10 12L6 8l4-4" />
+          </svg>
+          Retour aux biens
         </Link>
       )}
 
-      {/* En-tête + image */}
-      {bien.image && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={bien.image} alt={bien.nom} className="w-full rounded-2xl mt-4 h-64 object-cover" />
-      )}
-      <div className="flex gap-3 mt-4">
-        <Link
-          href={`/dashboard/biens/${bien.id}/modifier`}
-          className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
-        >
-          Modifier
-        </Link>
-        <button
-          onClick={handleDelete}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-500 transition-colors"
-        >
-          Supprimer
-        </button>
-      </div>
+      {/* Header card — gradient */}
+      <div
+        className="rounded-xl mt-4 mb-8 overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+        }}
+      >
+        {/* Image */}
+        {bien.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={bien.image}
+            alt={bien.nom}
+            className="w-full h-56 object-cover"
+          />
+        )}
 
-      <div className="mt-4 mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{bien.nom}</h1>
-        <p className="text-gray-500 mt-1">{bien.adresse}</p>
-        <span className="inline-block mt-2 text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
-          {bien.type}
-        </span>
+        {/* Contenu header */}
+        <div className="p-8">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="font-heading font-bold text-[22px] leading-7 tracking-[-0.01em] text-white m-0">
+                {bien.nom}
+              </h1>
+              <p className="font-body text-[13px] text-white/55 mt-1 m-0">
+                {bien.adresse}
+              </p>
+              <span
+                className={`inline-block mt-3 px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] ${typeColor.bg} ${typeColor.text}`}
+              >
+                {bien.type}
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <Link
+                href={`/dashboard/biens/${bien.id}/modifier`}
+                className="inline-flex items-center gap-2 px-[22px] py-[10px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
+                </svg>
+                Modifier
+              </Link>
+              <button
+                onClick={handleDelete}
+                className="inline-flex items-center gap-2 px-[22px] py-[10px] rounded-md font-body font-bold text-sm cursor-pointer transition-all duration-100"
+                style={{
+                  background: "rgba(255, 69, 58, 0.2)",
+                  border: "1px solid rgba(255, 69, 58, 0.3)",
+                  color: "#ff8f88",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 69, 58, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 69, 58, 0.2)";
+                }}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
+                </svg>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Description */}
       {bien.description && (
         <div className="mb-8">
-          <h2 className="text-sm font-medium text-gray-700 mb-2">Description</h2>
-          <p className="text-gray-600 text-sm">{bien.description}</p>
+          <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3">
+            Description
+          </h2>
+          <div className="bg-surface-elevated rounded-lg border border-border p-5">
+            <p className="font-body text-[15px] leading-6 text-text-secondary m-0 whitespace-pre-wrap">
+              {bien.description}
+            </p>
+          </div>
         </div>
       )}
 
       {/* CONDITIONNEL : Stats colocation OU Liste locataires */}
       {isColocation ? (
         <div className="mb-8">
-          <h2 className="text-sm font-medium text-gray-700 mb-4">Résumé de la colocation</h2>
+          <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-4">
+            Résumé de la colocation
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-500">Locataires actifs</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{nombreLocatairesActifs}</p>
-            </div>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-500">Chambres inoccupées</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
-                {chambresInoccupees} / {bien.sousBiens.length}
+            <div className="bg-surface-elevated rounded-lg border border-border p-5">
+              <p className="font-body text-xs text-text-tertiary m-0 mb-1">
+                Locataires actifs
+              </p>
+              <p className="font-heading font-bold text-[32px] leading-9 tracking-[-0.02em] text-text m-0">
+                {nombreLocatairesActifs}
               </p>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-500">Total cautions</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{sommeCautions} €</p>
+            <div className="bg-surface-elevated rounded-lg border border-border p-5">
+              <p className="font-body text-xs text-text-tertiary m-0 mb-1">
+                Chambres inoccupées
+              </p>
+              <p className="font-heading font-bold text-[32px] leading-9 tracking-[-0.02em] text-text m-0">
+                {chambresInoccupees}
+                <span className="text-text-tertiary text-[15px] font-normal ml-1">
+                  / {bien.sousBiens.length}
+                </span>
+              </p>
+            </div>
+            <div className="bg-surface-elevated rounded-lg border border-border p-5">
+              <p className="font-body text-xs text-text-tertiary m-0 mb-1">
+                Total cautions
+              </p>
+              <p className="font-heading font-bold text-[32px] leading-9 tracking-[-0.02em] text-text m-0">
+                {sommeCautions.toLocaleString()}
+                <span className="text-text-tertiary text-[15px] font-normal ml-1">
+                  €
+                </span>
+              </p>
             </div>
           </div>
         </div>
       ) : (
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-sm font-medium text-gray-700">Locataires</h2>
+            <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
+              Locataires
+            </h2>
             <Link
               href={`/dashboard/biens/${id}/locataires/nouveau`}
-              className="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+              className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
             >
-              + Ajouter un locataire
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="M7 1v12M1 7h12" />
+              </svg>
+              Ajouter un locataire
             </Link>
           </div>
 
           {locataires.length === 0 ? (
-            <p className="text-gray-500 text-sm">Aucun locataire pour le moment</p>
+            <div className="bg-surface-elevated rounded-lg border border-border py-12 px-6 text-center">
+              <p className="font-body text-sm text-text-tertiary">
+                Aucun locataire pour le moment
+              </p>
+            </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-2">
               {locataires.map((locataire) => (
                 <Link
                   key={locataire.id}
                   href={`/dashboard/locataires/${locataire.id}`}
-                  className="border rounded-lg p-4 hover:bg-gray-50 flex justify-between items-center"
+                  className="bg-surface-elevated rounded-lg border border-border p-4 flex justify-between items-center no-underline transition-all duration-200 hover:border-border-hover hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
                 >
                   <div>
-                    <p className="font-medium">{locataire.nom}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-heading font-medium text-[15px] leading-5 text-text m-0">
+                      {locataire.nom}
+                    </p>
+                    <p className="font-body text-[13px] text-text-secondary mt-1 m-0">
                       Entrée : {new Date(locataire.dateEntree).toLocaleDateString()}
                     </p>
                   </div>
                   <span
-                    className={`text-sm px-2 py-1 rounded ${
+                    className={`px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] ${
                       locataire.statut === "ACTIF"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-green-pastel text-green-text"
+                        : "bg-surface text-text-secondary"
                     }`}
                   >
                     {locataire.statut}
@@ -223,46 +367,85 @@ export default function BienDetailPage() {
         </div>
       )}
 
-      {/* Section colocation : chambres + bouton ajout */}
+      {/* Section colocation : chambres */}
       {isColocation && (
         <div className="mb-8">
-          <h2 className="text-sm font-medium text-gray-700 mb-4">Chambres</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
+              Chambres
+            </h2>
+            <Link
+              href={`/dashboard/biens/${bien.id}/chambres/nouveau`}
+              className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="M7 1v12M1 7h12" />
+              </svg>
+              Ajouter une chambre
+            </Link>
+          </div>
 
           {bien.sousBiens.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
-              <p className="text-gray-400 text-sm">Aucune chambre pour le moment</p>
+            <div className="bg-surface-elevated rounded-lg border border-border py-12 px-6 text-center">
+              <p className="font-body text-sm text-text-tertiary">
+                Aucune chambre pour le moment
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {bien.sousBiens.map((chambre) => (
-                <Link key={chambre.id} href={`/dashboard/biens/${chambre.id}`}>
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <Link
+                  key={chambre.id}
+                  href={`/dashboard/biens/${chambre.id}`}
+                  className="group no-underline"
+                >
+                  <div className="bg-surface-elevated rounded-lg border border-border overflow-hidden transition-all duration-200 group-hover:border-border-hover group-hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                     {chambre.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={chambre.image} alt={chambre.nom} className="h-48 w-full object-cover" />
+                      <img
+                        src={chambre.image}
+                        alt={chambre.nom}
+                        className="h-40 w-full object-cover"
+                      />
                     ) : (
-                      <div className="h-48 bg-slate-200 flex items-center justify-center">
-                        <span className="text-slate-400 text-sm">Image à venir</span>
+                      <div className="h-40 bg-surface flex items-center justify-center">
+                        <svg
+                          width="28"
+                          height="28"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="var(--text-tertiary)"
+                          strokeWidth="1"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="opacity-50"
+                        >
+                          <path d="M3 12L12 5l9 7" />
+                          <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+                        </svg>
                       </div>
                     )}
-                    <div className="p-4">
-                      <h2 className="font-semibold text-lg">{chambre.nom}</h2>
-                      <p className="text-gray-500 text-sm mt-1">{chambre.adresse}</p>
+                    <div className="p-5">
+                      <h3 className="font-heading font-medium text-[15px] leading-5 text-text m-0">
+                        {chambre.nom}
+                      </h3>
+                      <p className="font-body text-[13px] text-text-secondary mt-1 m-0 truncate">
+                        {chambre.adresse}
+                      </p>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
           )}
-
-          <div className="mt-4">
-            <Link
-              href={`/dashboard/biens/${bien.id}/chambres/nouveau`}
-              className="inline-block bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
-            >
-              + Ajouter une chambre
-            </Link>
-          </div>
         </div>
       )}
     </div>

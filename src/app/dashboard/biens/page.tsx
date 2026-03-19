@@ -1,84 +1,190 @@
 //liste de mes biens 
 "use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
 type Bien = {
-  id: number
-  nom: string
-  adresse: string
-  type: string
-  description: string | null
-  image: string | null
-}
+  id: number;
+  nom: string;
+  adresse: string;
+  type: string;
+  description: string | null;
+  image: string | null;
+};
 
+const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  APPARTEMENT: { bg: "bg-blue-pastel", text: "text-blue-text" },
+  MAISON: { bg: "bg-green-pastel", text: "text-green-text" },
+  STUDIO: { bg: "bg-violet-pastel", text: "text-violet-text" },
+  COLOCATION: { bg: "bg-amber-pastel", text: "text-amber-text" },
+  CHAMBRE: { bg: "bg-cyan-pastel", text: "text-cyan-text" },
+};
+
+function getTypeColor(type: string) {
+  return TYPE_COLORS[type] || { bg: "bg-surface", text: "text-text-secondary" };
+}
 
 export default function BiensPage() {
   const [biens, setBiens] = useState<Bien[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchBiens() {
-      const response = await fetch("/api/biens")
-      const data = await response.json()
-      console.log(data)
-      setBiens(data)
+      const response = await fetch("/api/biens");
+      const data = await response.json();
+      setBiens(data);
+      setLoading(false);
     }
-    fetchBiens()
-  }, [])
+    fetchBiens();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="font-body text-sm text-text-secondary">Chargement...</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
+    <div className="max-w-[960px] mx-auto">
+      {/* En-tête */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Mes biens</h1>
+        <div>
+          <h1 className="font-heading font-bold text-[28px] leading-[34px] tracking-[-0.02em] text-text">
+            Mes biens
+          </h1>
+          {biens.length > 0 && (
+            <p className="font-body text-[13px] text-text-tertiary mt-1">
+              {biens.length} bien{biens.length !== 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
         {biens.length > 0 && (
           <Link
             href="/dashboard/biens/nouveau"
-            className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
           >
-            + Ajouter un bien
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <path d="M7 1v12M1 7h12" />
+            </svg>
+            Ajouter un bien
           </Link>
         )}
       </div>
 
+      {/* État vide */}
       {biens.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Vous n&apos;avez pas encore de biens</p>
-          <p className="text-gray-400 text-sm mt-2">Commencez par ajouter votre premier bien</p>
+        <div className="bg-surface-elevated rounded-lg border border-border py-16 px-6 text-center">
+          <div className="w-12 h-12 rounded-full bg-glass-light flex items-center justify-center mx-auto mb-4">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--text-tertiary)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 12L12 5l9 7" />
+              <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+            </svg>
+          </div>
+          <p className="font-body text-[15px] text-text-secondary">
+            Vous n&apos;avez pas encore de biens
+          </p>
+          <p className="font-body text-[13px] text-text-tertiary mt-1">
+            Commencez par ajouter votre premier bien
+          </p>
           <Link
             href="/dashboard/biens/nouveau"
-            className="inline-block mt-4 bg-slate-800 text-white px-6 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-2 mt-5 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
           >
-            + Ajouter un bien
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <path d="M7 1v12M1 7h12" />
+            </svg>
+            Ajouter un bien
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-          {biens.map((bien) => (
-            <Link key={bien.id} href={`/dashboard/biens/${bien.id}`}>
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
-                {bien.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={bien.image} alt={bien.nom} className="h-48 w-full object-cover" />
+        /* Grille de biens */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {biens.map((bien) => {
+            const typeColor = getTypeColor(bien.type);
+            return (
+              <Link
+                key={bien.id}
+                href={`/dashboard/biens/${bien.id}`}
+                className="group no-underline"
+              >
+                <div className="bg-surface-elevated rounded-lg border border-border overflow-hidden transition-all duration-200 group-hover:border-border-hover group-hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                  {/* Image */}
+                  {bien.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={bien.image}
+                      alt={bien.nom}
+                      className="h-44 w-full object-cover"
+                    />
                   ) : (
-                  <div className="h-48 bg-slate-200 flex items-center justify-center">
-                    <span className="text-slate-400 text-sm">Image à venir</span>
-                  </div>
-                )}                
-              
-                
-                
-                <div className="p-4">
-                  <h2 className="font-semibold text-lg">{bien.nom}</h2>
-                  <p className="text-gray-500 text-sm mt-1">{bien.adresse}</p>
-                  <div className="flex items-center justify-between mt-3">
-                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">{bien.type}</span>
+                    <div className="h-44 bg-surface flex items-center justify-center">
+                      <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="var(--text-tertiary)"
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="opacity-50"
+                      >
+                        <path d="M3 12L12 5l9 7" />
+                        <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+                      </svg>
+                    </div>
+                  )}
+
+                  {/* Contenu */}
+                  <div className="p-5">
+                    <h2 className="font-heading font-medium text-[15px] leading-5 text-text">
+                      {bien.nom}
+                    </h2>
+                    <p className="font-body text-[13px] leading-5 text-text-secondary mt-1 truncate">
+                      {bien.adresse}
+                    </p>
+                    <div className="flex items-center mt-3">
+                      <span
+                        className={`px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] ${typeColor.bg} ${typeColor.text}`}
+                      >
+                        {bien.type}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
-  )
+  );
 }
