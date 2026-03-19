@@ -13,6 +13,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
+      <head>
+        {/* eslint-disable-next-line @next/next/no-page-custom-font*/}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         {children}
       </body>

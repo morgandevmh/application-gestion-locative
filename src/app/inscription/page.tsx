@@ -1,3 +1,4 @@
+// page inscription 
 "use client";
 import { register } from "@/actions/auth";
 import { useState } from "react";
