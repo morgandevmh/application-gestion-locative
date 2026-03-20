@@ -21,14 +21,6 @@ type Locataire = {
   };
 };
 
-function getInitiales(nom: string) {
-  const parts = nom.trim().split(" ");
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
-  return nom.slice(0, 2).toUpperCase();
-}
-
 export default function LocataireDetailPage() {
   const [locataire, setLocataire] = useState<Locataire | null>(null);
   const params = useParams();
@@ -89,59 +81,50 @@ export default function LocataireDetailPage() {
         Retour
       </button>
 
-      {/* Header card — gradient (inline style nécessaire pour le gradient custom) */}
+      {/* Header card — gradient */}
       <div
-        className="mb-8 rounded-xl p-8"
+        className="mb-8 rounded-xl"
         style={{
           background:
             "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
         }}
       >
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          {/* Avatar + infos */}
-          <div className="flex items-center gap-4">
-            <div
-              className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 font-heading font-bold text-xl text-white border border-glass-on-gradient-border bg-glass-on-gradient-hover"
-            >
-              {getInitiales(locataire.nom)}
-            </div>
-            <div>
-              <h1 className="font-heading font-bold text-[22px] leading-7 tracking-[-0.01em] text-white m-0">
+        {/* Desktop */}
+        <div className="hidden md:flex items-center justify-between gap-4 px-7 py-6">
+          <div className="flex items-center gap-[14px] min-w-0">
+            {locataire.statut === "ACTIF" ? (
+              <span
+                className="inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] shrink-0"
+                style={{
+                  background: "rgba(52, 199, 89, 0.2)",
+                  color: "#5ee87a",
+                  border: "1px solid rgba(52, 199, 89, 0.3)",
+                }}
+              >
+                ACTIF
+              </span>
+            ) : (
+              <span className="inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] shrink-0 bg-glass-on-gradient text-white/65 border border-glass-on-gradient-border">
+                SORTI
+              </span>
+            )}
+            <div className="min-w-0">
+              <h1 className="font-heading font-bold text-[20px] leading-[26px] tracking-[-0.01em] text-white m-0 truncate">
                 {locataire.nom}
               </h1>
-              <div className="flex items-center gap-3 mt-2">
-                {locataire.statut === "ACTIF" ? (
-                  <span
-                    className="inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px]"
-                    style={{
-                      background: "rgba(52, 199, 89, 0.2)",
-                      color: "#5ee87a",
-                      border: "1px solid rgba(52, 199, 89, 0.3)",
-                    }}
-                  >
-                    ACTIF
-                  </span>
-                ) : (
-                  <span className="inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] bg-glass-on-gradient text-white/65 border border-glass-on-gradient-border">
-                    {locataire.statut}
-                  </span>
-                )}
-                <span className="font-body text-[13px] text-white/55">
-                  {locataire.bien.nom}
-                </span>
-              </div>
+              <p className="font-body text-[13px] text-white/55 m-0 mt-[2px] truncate">
+                {locataire.bien.nom}
+              </p>
             </div>
           </div>
-
-          {/* Actions — glass on gradient */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             <Link
               href={`/dashboard/locataires/${locataire.id}/modifier`}
-              className="inline-flex items-center gap-2 px-[22px] py-[10px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-sm no-underline cursor-pointer transition-all duration-100 hover:bg-glass-on-gradient-hover"
+              className="inline-flex items-center gap-[6px] px-[18px] py-2 rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-[13px] no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
             >
               <svg
-                width="14"
-                height="14"
+                width="13"
+                height="13"
                 viewBox="0 0 14 14"
                 fill="none"
                 stroke="currentColor"
@@ -155,7 +138,7 @@ export default function LocataireDetailPage() {
             </Link>
             <button
               onClick={handleDelete}
-              className="inline-flex items-center gap-2 px-[22px] py-[10px] rounded-md font-body font-bold text-sm cursor-pointer transition-all duration-100"
+              className="inline-flex items-center gap-[6px] px-[18px] py-2 rounded-md font-body font-bold text-[13px] cursor-pointer transition-all duration-100"
               style={{
                 background: "rgba(255, 69, 58, 0.2)",
                 border: "1px solid rgba(255, 69, 58, 0.3)",
@@ -169,8 +152,8 @@ export default function LocataireDetailPage() {
               }}
             >
               <svg
-                width="14"
-                height="14"
+                width="13"
+                height="13"
                 viewBox="0 0 14 14"
                 fill="none"
                 stroke="currentColor"
@@ -181,6 +164,82 @@ export default function LocataireDetailPage() {
                 <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
               </svg>
               Supprimer
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile */}
+        <div className="flex md:hidden items-center justify-between gap-3 px-5 py-5">
+          <div className="flex items-center gap-[10px] min-w-0">
+            {locataire.statut === "ACTIF" ? (
+              <span
+                className="inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] shrink-0"
+                style={{
+                  background: "rgba(52, 199, 89, 0.2)",
+                  color: "#5ee87a",
+                  border: "1px solid rgba(52, 199, 89, 0.3)",
+                }}
+              >
+                ACTIF
+              </span>
+            ) : (
+              <span className="inline-block px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] shrink-0 bg-glass-on-gradient text-white/65 border border-glass-on-gradient-border">
+                SORTI
+              </span>
+            )}
+            <div className="min-w-0">
+              <h1 className="font-heading font-bold text-[17px] leading-[22px] tracking-[-0.01em] text-white m-0 truncate">
+                {locataire.nom}
+              </h1>
+              <p className="font-body text-xs text-white/55 m-0 mt-[2px] truncate">
+                {locataire.bien.nom}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-[6px] shrink-0">
+            <Link
+              href={`/dashboard/locataires/${locataire.id}/modifier`}
+              className="flex items-center justify-center w-[34px] h-[34px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
+              </svg>
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="flex items-center justify-center w-[34px] h-[34px] rounded-md cursor-pointer transition-all duration-100"
+              style={{
+                background: "rgba(255, 69, 58, 0.2)",
+                border: "1px solid rgba(255, 69, 58, 0.3)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255, 69, 58, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255, 69, 58, 0.2)";
+              }}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="#ff8f88"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
+              </svg>
             </button>
           </div>
         </div>

@@ -28,6 +28,45 @@ type DashboardData = {
   }[];
 };
 
+const AVATAR_COLORS: { bg: string; text: string }[] = [
+  { bg: "bg-blue-pastel", text: "text-blue-text" },
+  { bg: "bg-violet-pastel", text: "text-violet-text" },
+  { bg: "bg-green-pastel", text: "text-green-text" },
+  { bg: "bg-amber-pastel", text: "text-amber-text" },
+  { bg: "bg-red-pastel", text: "text-red-text" },
+  { bg: "bg-cyan-pastel", text: "text-cyan-text" },
+];
+
+const TYPE_LABELS: Record<string, string> = {
+  APPARTEMENT: "Appartement",
+  MAISON: "Maison",
+  STUDIO: "Studio",
+  COLOCATION: "Colocation",
+};
+
+const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  APPARTEMENT: { bg: "bg-blue-pastel", text: "text-blue-text" },
+  MAISON: { bg: "bg-green-pastel", text: "text-green-text" },
+  STUDIO: { bg: "bg-violet-pastel", text: "text-violet-text" },
+  COLOCATION: { bg: "bg-amber-pastel", text: "text-amber-text" },
+};
+
+function getAvatarColor(nom: string) {
+  let hash = 0;
+  for (let i = 0; i < nom.length; i++) {
+    hash += nom.charCodeAt(i);
+  }
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+function getInitiales(nom: string) {
+  const parts = nom.trim().split(" ");
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return nom.slice(0, 2).toUpperCase();
+}
+
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,37 +94,74 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">Chargement...</p>
+        <p className="font-body text-sm text-text-secondary">Chargement...</p>
       </div>
     );
   }
 
   if (!data) return null;
 
-  const COLORS = [
-    "#6366f1", "#8b5cf6", "#ec4899", "#f97316",
-    "#eab308", "#22c55e", "#14b8a6", "#3b82f6",
-  ];
+  const remplissagePct =
+    data.remplissage.total > 0
+      ? Math.round((data.remplissage.loues / data.remplissage.total) * 100)
+      : 0;
+
+  const remplissageArc =
+    data.remplissage.total > 0
+      ? (data.remplissage.loues / data.remplissage.total) * 87.96
+      : 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4 lg:h-[calc(100vh-2rem)] lg:overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_25%] gap-3 lg:h-full">
 
-        {/* Colonne gauche */}
+        {/* ===== Colonne gauche ===== */}
         <div className="flex flex-col gap-3 lg:min-h-0">
 
-          {/* M1 — Header */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-between shrink-0">
+          {/* M1 — Header gradient */}
+          <div
+            className="rounded-xl px-6 py-4 flex items-center justify-between shrink-0"
+            style={{
+              background:
+                "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+            }}
+          >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
-                <span className="text-slate-500 text-lg">👤</span>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-glass-on-gradient-hover border border-glass-on-gradient-border">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="10" cy="7" r="3.5" />
+                  <path d="M3.5 18c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" />
+                </svg>
               </div>
-              <p className="text-sm font-medium text-gray-900">{data.user.name}</p>
+              <p className="font-heading font-bold text-[15px] text-white m-0">
+                {data.user.name}
+              </p>
             </div>
             <button
               onClick={handleLogout}
-              className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition-colors"
+              className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-xs cursor-pointer transition-all duration-100 hover:bg-glass-on-gradient-hover"
             >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 1H3a1 1 0 00-1 1v10a1 1 0 001 1h2M9 10l3-3-3-3M12 7H5" />
+              </svg>
               Déconnexion
             </button>
           </div>
@@ -93,175 +169,258 @@ export default function DashboardPage() {
           {/* M3 + M4 */}
           <div className="grid grid-cols-2 md:flex gap-3 shrink-0">
             {/* M4 — Taux de remplissage */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center justify-center md:w-[180px]">
+            <div className="bg-surface-elevated rounded-lg border border-border p-4 flex flex-col items-center justify-center md:w-[180px]">
               <div className="relative w-20 h-20">
                 <svg viewBox="0 0 36 36" className="w-full h-full">
                   <circle
-                    cx="18" cy="18" r="14"
+                    cx="18"
+                    cy="18"
+                    r="14"
                     fill="none"
-                    stroke="#e5e7eb"
+                    stroke="var(--border)"
                     strokeWidth="4"
                   />
                   <circle
-                    cx="18" cy="18" r="14"
+                    cx="18"
+                    cy="18"
+                    r="14"
                     fill="none"
-                    stroke="#22c55e"
+                    stroke="var(--accent)"
                     strokeWidth="4"
-                    strokeDasharray={`${data.remplissage.total > 0 ? (data.remplissage.loues / data.remplissage.total) * 87.96 : 0} 87.96`}
+                    strokeDasharray={`${remplissageArc} 87.96`}
                     strokeLinecap="round"
                     transform="rotate(-90 18 18)"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold text-gray-900">
-                    {data.remplissage.total > 0
-                      ? Math.round((data.remplissage.loues / data.remplissage.total) * 100)
-                      : 0}%
+                  <span className="font-heading font-bold text-sm text-text">
+                    {remplissagePct}%
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Remplissage</p>
-              <p className="text-xs text-gray-400">{data.remplissage.loues}/{data.remplissage.total}</p>
+              <p className="font-body text-xs text-text-secondary mt-2">
+                Remplissage
+              </p>
+              <p className="font-body text-xs text-text-tertiary">
+                {data.remplissage.loues}/{data.remplissage.total}
+              </p>
             </div>
+
             {/* M3 — Générer bail */}
-            <div className="md:flex-1 bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center">
-              <p className="text-sm text-gray-400">Générer un bail</p>
+            <div className="md:flex-1 bg-surface-elevated rounded-lg border border-border p-4 flex items-center justify-center">
+              <p className="font-body text-sm text-text-tertiary">
+                Générer un bail
+              </p>
             </div>
           </div>
 
           {/* M5 + M6 — Résumé */}
-          <div className="bg-white rounded-lg border border-gray-200 p-3 shrink-0">
-            <div className="flex flex-col md:flex-row gap-3">
+          <div className="bg-surface-elevated rounded-lg border border-border p-5 shrink-0 lg:max-h-[160px]">
+            <div className="flex flex-col md:flex-row gap-4">
               {/* Résumé global — 70% */}
               <div className="md:flex-[7]">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Résumé global</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-gray-900">{data.resumeGlobal.totalBiens}</p>
-                    <p className="text-xs text-gray-500">Biens</p>
+                <h3 className="font-heading py-2 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3">
+                  Résumé global
+                </h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-surface rounded-lg p-3 text-center">
+                    <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
+                      {data.resumeGlobal.totalBiens}
+                    </p>
+                    <p className="font-body text-xs text-text-secondary mt-1">
+                      Biens
+                    </p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-gray-900">{data.resumeGlobal.totalLocataires}</p>
-                    <p className="text-xs text-gray-500">Locataires</p>
+                  <div className="bg-surface rounded-lg p-3 text-center">
+                    <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
+                      {data.resumeGlobal.totalLocataires}
+                    </p>
+                    <p className="font-body text-xs text-text-secondary mt-1">
+                      Locataires
+                    </p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-gray-900">{data.resumeGlobal.totalCautions.toLocaleString()}&nbsp;€</p>
-                    <p className="text-xs text-gray-500">Cautions</p>
-                  </div>
+                  <div className="bg-surface rounded-lg p-3 text-center">
+  <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
+    {data.resumeGlobal.totalCautions.toLocaleString()}
+  </p>
+  <p className="font-body text-xs text-text-secondary mt-1">
+    Cautions (€)
+  </p>
+</div>
                 </div>
               </div>
+
               {/* Patrimoine — 30% */}
-              <div className="md:flex-[3] border-t md:border-t-0 md:border-l border-gray-200 pt-3 md:pt-0 md:pl-3">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Patrimoine</h3>
+              <div className="md:flex-[3] border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-4">
+                <h3 className="font-heading py-1 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3">
+                  Patrimoine
+                </h3>
                 <div className="flex flex-col gap-1">
-                  {Object.entries(data.patrimoine).map(([type, count]) => (
-                    <div key={type} className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
-                        {type === "APPARTEMENT" && "Appartement"}
-                        {type === "MAISON" && "Maison"}
-                        {type === "STUDIO" && "Studio"}
-                        {type === "COLOCATION" && "Colocation"}
-                        {count > 1 ? "s" : ""}
-                      </span>
-                      <span className="text-sm font-medium text-gray-900">{count}</span>
-                    </div>
-                  ))}
+                  {Object.entries(data.patrimoine).map(([type, count]) => {
+                    const tc = TYPE_COLORS[type] || {
+                      bg: "bg-surface",
+                      text: "text-text-secondary",
+                    };
+                    return (
+                      <div
+                        key={type}
+                        className="flex items-center justify-between"
+                      >
+                        <span className={`font-body font-bold text-[11px] ${tc.text} ${tc.bg} px-1 rounded-sm`}>
+                          {TYPE_LABELS[type] || type}
+                          {count > 1 ? "s" : ""}
+                        </span>
+                        <span className="font-heading font-bold text-sm text-text">
+                          {count}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           </div>
 
           {/* M8 — Derniers biens */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 flex-1 min-h-0 overflow-hidden flex flex-col">
-            <h3 className="text-sm font-medium text-gray-700 mb-3 shrink-0">Derniers biens modifiés</h3>
-            <div className="grid grid-cols-3 gap-3 flex-1 min-h-0">
+          <div className="bg-surface-elevated rounded-lg border border-border p-5 flex-1 min-h-0 overflow-hidden flex flex-col">
+            <h3 className="font-heading pb-4 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3 shrink-0">
+              Derniers biens modifiés
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1 min-h-0 [&>*:nth-child(n+3)]:hidden md:[&>*:nth-child(n+3)]:flex">
               {data.derniersBiens.length === 0 ? (
-                <p className="text-sm text-gray-400">Aucun bien</p>
+                <p className="font-body text-sm text-text-tertiary">Aucun bien</p>
               ) : (
-                data.derniersBiens.map((bien) => (
-                  <div
-                    key={bien.id}
-                    onClick={() => router.push(`/dashboard/biens/${bien.id}`)}
-                    className="rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors overflow-hidden flex flex-col"
-                  >
-                    <div className="flex-1 min-h-0 bg-gray-100">
-                      {bien.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={bien.image} alt={bien.nom} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                          Pas d&apos;image
-                        </div>
-                      )}
+                data.derniersBiens.map((bien) => {
+                  const tc = TYPE_COLORS[bien.type] || {
+                    bg: "bg-surface",
+                    text: "text-text-secondary",
+                  };
+                  return (
+                    <div
+                      key={bien.id}
+                      onClick={() =>
+                        router.push(`/dashboard/biens/${bien.id}`)
+                      }
+                      className="rounded-lg border max-h-[200px] border-border hover:border-border-hover cursor-pointer transition-all duration-200 overflow-hidden flex flex-col hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+                    >
+                      <div className="flex-1 min-h-0 bg-surface">
+                        {bien.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={bien.image}
+                            alt={bien.nom}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="var(--text-tertiary)"
+                              strokeWidth="1"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="opacity-40"
+                            >
+                              <path d="M3 12L12 5l9 7" />
+                              <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3 shrink-0">
+                        <p className="font-heading font-medium text-sm text-text truncate m-0">
+                          {bien.nom}
+                        </p>
+                        <p className="font-body text-xs text-text-secondary truncate mt-[2px] m-0">
+                          {bien.adresse}
+                        </p>
+                        <span
+                          className={`inline-block mt-2 px-[8px] py-[2px] rounded-full font-body font-bold text-[10px] ${tc.bg} ${tc.text}`}
+                        >
+                          {TYPE_LABELS[bien.type] || bien.type}
+                        </span>
+                      </div>
                     </div>
-                    <div className="p-2 shrink-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{bien.nom}</p>
-                      <p className="text-xs text-gray-500 truncate">{bien.adresse}</p>
-                      <span className="text-xs text-gray-400">
-                        {bien.type === "APPARTEMENT" && "Appartement"}
-                        {bien.type === "MAISON" && "Maison"}
-                        {bien.type === "STUDIO" && "Studio"}
-                        {bien.type === "COLOCATION" && "Colocation"}
-                      </span>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
-
         </div>
 
-        {/* Colonne droite */}
+        {/* ===== Colonne droite ===== */}
         <div className="flex flex-col gap-3 lg:min-h-0">
           {/* M2 — Calendrier */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-center shrink-0 lg:flex-[30]">
-            <p className="text-sm text-gray-400">Calendrier</p>
+          <div className="bg-surface-elevated rounded-lg border border-border p-4 flex items-center justify-center shrink-0 lg:flex-[30]">
+            <p className="font-body text-sm text-text-tertiary">Calendrier</p>
           </div>
 
-          {/* M7 — Derniers locataires */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 lg:flex-[70] min-h-0 overflow-hidden">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Derniers locataires modifiés</h3>
+          {/* M7 — Derniers locataires (gradient) */}
+          <div
+            className="rounded-xl p-5 lg:flex-[70] min-h-0 overflow-hidden"
+            style={{
+              background:
+                "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+            }}
+          >
+            <h3 className="font-heading py-2 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-white/45 mb-4">
+              Derniers locataires modifiés
+            </h3>
             <div className="flex flex-col gap-3">
               {data.derniersLocataires.length === 0 ? (
-                <p className="text-sm text-gray-400">Aucun locataire</p>
+                <p className="font-body text-sm text-white/45">
+                  Aucun locataire
+                </p>
               ) : (
                 data.derniersLocataires.map((locataire) => {
-                  const colorIndex = locataire.nom
-                    .split("")
-                    .reduce((sum, char) => sum + char.charCodeAt(0), 0) % COLORS.length;
-                  const initiales = locataire.nom
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()
-                    .slice(0, 2);
-                  const nomBien =
-                    locataire.bien.parent
-                      ? `${locataire.bien.parent.nom} — ${locataire.bien.nom}`
-                      : locataire.bien.nom;
+                  const color = getAvatarColor(locataire.nom);
+                  const initiales = getInitiales(locataire.nom);
+                  const nomBien = locataire.bien.parent
+                    ? `${locataire.bien.parent.nom} — ${locataire.bien.nom}`
+                    : locataire.bien.nom;
 
                   return (
                     <div
                       key={locataire.id}
-                      onClick={() => router.push(`/dashboard/locataires/${locataire.id}`)}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                      onClick={() =>
+                        router.push(
+                          `/dashboard/locataires/${locataire.id}`
+                        )
+                      }
+                      className="flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-glass-on-gradient-hover border border-glass-on-gradient-border"
                     >
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium shrink-0"
-                        style={{ backgroundColor: COLORS[colorIndex] }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center font-heading font-bold text-xs shrink-0 ${color.bg} ${color.text}`}
                       >
                         {initiales}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-900 truncate">{locataire.nom}</p>
-                        <p className="text-xs text-gray-500 truncate">{nomBien}</p>
+                        <p className="font-heading font-medium text-sm text-white truncate m-0">
+                          {locataire.nom}
+                        </p>
+                        <p className="font-body text-xs text-white/55 truncate m-0">
+                          {nomBien}
+                        </p>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                        locataire.statut === "ACTIF"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-600"
-                      }`}>
+                      <span
+                        className={`px-[10px] py-[3px] rounded-full font-body font-bold text-[11px] shrink-0 ${
+                          locataire.statut === "ACTIF"
+                            ? ""
+                            : "bg-glass-on-gradient text-white/65 border border-glass-on-gradient-border"
+                        }`}
+                        style={
+                          locataire.statut === "ACTIF"
+                            ? {
+                                background: "rgba(52, 199, 89, 0.2)",
+                                color: "#5ee87a",
+                                border: "1px solid rgba(52, 199, 89, 0.3)",
+                              }
+                            : undefined
+                        }
+                      >
                         {locataire.statut === "ACTIF" ? "Actif" : "Sorti"}
                       </span>
                     </div>
@@ -271,7 +430,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
