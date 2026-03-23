@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import ModalCreationLocataire from "@/components/ModalCreationLocataire";
 
 type Locataire = {
   id: number;
@@ -53,8 +54,15 @@ function getTypeColor(type: string) {
 export default function BienDetailPage() {
   const [bien, setBien] = useState<Bien | null>(null);
   const [locataires, setLocataires] = useState<Locataire[]>([]);
+  const [modalOuverte, setModalOuverte] = useState(false);
   const params = useParams();
   const id = params.id;
+
+  function fetchLocataires() {
+    fetch(`/api/biens/${id}/locataires`)
+      .then((res) => res.json())
+      .then((data) => setLocataires(data));
+  }
 
   useEffect(() => {
     async function fetchBien() {
@@ -63,13 +71,8 @@ export default function BienDetailPage() {
       setBien(data);
     }
     fetchBien();
-
-    async function fetchLocataires() {
-      const response = await fetch(`/api/biens/${id}/locataires`);
-      const data = await response.json();
-      setLocataires(data);
-    }
     fetchLocataires();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function handleDelete() {
@@ -162,119 +165,119 @@ export default function BienDetailPage() {
         </Link>
       )}
 
-{/* Header card — gradient compact */}
-<div
-  className="rounded-xl mt-4 mb-8 overflow-hidden"
-  style={{
-    background:
-      "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
-  }}
->
-  {/* Image */}
-  {bien.image && (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={bien.image}
-      alt={bien.nom}
-      className="w-full h-56 object-cover"
-    />
-  )}
-
-  {/* Desktop */}
-  <div className="hidden md:flex items-center justify-between flex-wrap gap-3 px-6 py-4">
-    <div className="flex items-center gap-3 min-w-0">
-      <h1 className="font-heading font-bold text-[18px] leading-6 tracking-[-0.01em] text-white m-0">
-        {bien.nom}
-      </h1>
-      <span
-        className={`px-2 py-[1px] rounded-full font-body font-bold text-[8px] shrink-0 ${typeColor.bg} ${typeColor.text}`}
-      >
-        {bien.type}
-      </span>
-    </div>
-    <div className="flex gap-2 shrink-0">
-      <Link
-        href={`/dashboard/biens/${bien.id}/modifier`}
-        className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-xs no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
-      >
-        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
-        </svg>
-        Modifier
-      </Link>
-      <button
-        onClick={handleDelete}
-        className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md font-body font-bold text-xs cursor-pointer transition-all duration-100"
+      {/* Header card — gradient compact */}
+      <div
+        className="rounded-xl mt-4 mb-8 overflow-hidden"
         style={{
-          background: "rgba(255, 69, 58, 0.2)",
-          border: "1px solid rgba(255, 69, 58, 0.3)",
-          color: "#ff8f88",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(255, 69, 58, 0.3)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(255, 69, 58, 0.2)";
+          background:
+            "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
-        </svg>
-        Supprimer
-      </button>
-    </div>
-    <p className="font-body text-[13px] text-white/55 mt-1 m-0 w-full">
-      {bien.adresse}
-    </p>
-  </div>
+        {/* Image */}
+        {bien.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={bien.image}
+            alt={bien.nom}
+            className="w-full h-56 object-cover"
+          />
+        )}
 
-  {/* Mobile */}
-  <div className="flex md:hidden items-center justify-between gap-3 px-5 py-4">
-    <div className="min-w-0">
-      <div className="flex items-center gap-[10px]">
-        <h1 className="font-heading font-bold text-[17px] leading-[22px] tracking-[-0.01em] text-white m-0 truncate">
-          {bien.nom}
-        </h1>
-        <span
-          className={`px-2 py-[1px] rounded-full font-body font-bold text-[8px] shrink-0 ${typeColor.bg} ${typeColor.text}`}
-        >
-          {bien.type}
-        </span>
+        {/* Desktop */}
+        <div className="hidden md:flex items-center justify-between flex-wrap gap-3 px-6 py-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="font-heading font-bold text-[18px] leading-6 tracking-[-0.01em] text-white m-0">
+              {bien.nom}
+            </h1>
+            <span
+              className={`px-2 py-[1px] rounded-full font-body font-bold text-[8px] shrink-0 ${typeColor.bg} ${typeColor.text}`}
+            >
+              {bien.type}
+            </span>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Link
+              href={`/dashboard/biens/${bien.id}/modifier`}
+              className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-xs no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
+            >
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
+              </svg>
+              Modifier
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md font-body font-bold text-xs cursor-pointer transition-all duration-100"
+              style={{
+                background: "rgba(255, 69, 58, 0.2)",
+                border: "1px solid rgba(255, 69, 58, 0.3)",
+                color: "#ff8f88",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255, 69, 58, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255, 69, 58, 0.2)";
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
+              </svg>
+              Supprimer
+            </button>
+          </div>
+          <p className="font-body text-[13px] text-white/55 mt-1 m-0 w-full">
+            {bien.adresse}
+          </p>
+        </div>
+
+        {/* Mobile */}
+        <div className="flex md:hidden items-center justify-between gap-3 px-5 py-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-[10px]">
+              <h1 className="font-heading font-bold text-[17px] leading-[22px] tracking-[-0.01em] text-white m-0 truncate">
+                {bien.nom}
+              </h1>
+              <span
+                className={`px-2 py-[1px] rounded-full font-body font-bold text-[8px] shrink-0 ${typeColor.bg} ${typeColor.text}`}
+              >
+                {bien.type}
+              </span>
+            </div>
+            <p className="font-body text-xs text-white/55 m-0 mt-[2px] truncate">
+              {bien.adresse}
+            </p>
+          </div>
+          <div className="flex gap-[6px] shrink-0">
+            <Link
+              href={`/dashboard/biens/${bien.id}/modifier`}
+              className="flex items-center justify-center w-[34px] h-[34px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
+              </svg>
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="flex items-center justify-center w-[34px] h-[34px] rounded-md cursor-pointer transition-all duration-100"
+              style={{
+                background: "rgba(255, 69, 58, 0.2)",
+                border: "1px solid rgba(255, 69, 58, 0.3)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255, 69, 58, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255, 69, 58, 0.2)";
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#ff8f88" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
-      <p className="font-body text-xs text-white/55 m-0 mt-[2px] truncate">
-        {bien.adresse}
-      </p>
-    </div>
-    <div className="flex gap-[6px] shrink-0">
-      <Link
-        href={`/dashboard/biens/${bien.id}/modifier`}
-        className="flex items-center justify-center w-[34px] h-[34px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
-      >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
-        </svg>
-      </Link>
-      <button
-        onClick={handleDelete}
-        className="flex items-center justify-center w-[34px] h-[34px] rounded-md cursor-pointer transition-all duration-100"
-        style={{
-          background: "rgba(255, 69, 58, 0.2)",
-          border: "1px solid rgba(255, 69, 58, 0.3)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(255, 69, 58, 0.3)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(255, 69, 58, 0.2)";
-        }}
-      >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#ff8f88" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
 
       {/* Description */}
       {bien.description && (
@@ -335,9 +338,9 @@ export default function BienDetailPage() {
             <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Locataires
             </h2>
-            <Link
-              href={`/dashboard/biens/${id}/locataires/nouveau`}
-              className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+            <button
+              onClick={() => setModalOuverte(true)}
+              className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
             >
               <svg
                 width="14"
@@ -351,7 +354,7 @@ export default function BienDetailPage() {
                 <path d="M7 1v12M1 7h12" />
               </svg>
               Ajouter un locataire
-            </Link>
+            </button>
           </div>
 
           {locataires.length === 0 ? (
@@ -472,6 +475,18 @@ export default function BienDetailPage() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Modale création locataire */}
+      {modalOuverte && (
+        <ModalCreationLocataire
+          bienId={id}
+          onClose={() => setModalOuverte(false)}
+          onSuccess={() => {
+            setModalOuverte(false);
+            fetchLocataires();
+          }}
+        />
       )}
     </div>
   );

@@ -223,7 +223,7 @@ export default function DashboardPage() {
                   Résumé global
                 </h3>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-surface rounded-lg p-3 text-center">
+                  <div className="rounded-lg p-3 text-center">
                     <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
                       {data.resumeGlobal.totalBiens}
                     </p>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                       Biens
                     </p>
                   </div>
-                  <div className="bg-surface rounded-lg p-3 text-center">
+                  <div className="rounded-lg p-3 text-center">
                     <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
                       {data.resumeGlobal.totalLocataires}
                     </p>
@@ -239,14 +239,14 @@ export default function DashboardPage() {
                       Locataires
                     </p>
                   </div>
-                  <div className="bg-surface rounded-lg p-3 text-center">
-  <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
-    {data.resumeGlobal.totalCautions.toLocaleString()}
-  </p>
-  <p className="font-body text-xs text-text-secondary mt-1">
-    Cautions (€)
-  </p>
-</div>
+                  <div className="rounded-lg p-3 text-center">
+                  <p className="font-heading font-bold text-[28px] leading-8 tracking-[-0.02em] text-text m-0">
+                    {data.resumeGlobal.totalCautions.toLocaleString()}
+                  </p>
+                  <p className="font-body text-xs text-text-secondary mt-1">
+                    Cautions (€)
+                  </p>
+                </div>
                 </div>
               </div>
 
