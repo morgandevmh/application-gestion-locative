@@ -2,8 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import ModalModificationLocataire from "@/components/ModalModificationLocataire";
 
 type Locataire = {
   id: number;
@@ -23,6 +23,7 @@ type Locataire = {
 
 export default function LocataireDetailPage() {
   const [locataire, setLocataire] = useState<Locataire | null>(null);
+  const [modalModifierLocataire, setModalModifierLocataire] = useState(false);
   const params = useParams();
   const id = params.id;
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function LocataireDetailPage() {
         className="mb-8 rounded-xl"
         style={{
           background:
-            "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+            "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 60%, #1a2a4a 85%, #1a2a4a 100%)",
         }}
       >
         {/* Desktop */}
@@ -118,10 +119,10 @@ export default function LocataireDetailPage() {
             </div>
           </div>
           <div className="flex gap-2 shrink-0">
-            <Link
-              href={`/dashboard/locataires/${locataire.id}/modifier`}
-              className="inline-flex items-center gap-[6px] px-[18px] py-2 rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-[13px] no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
-            >
+          <button
+            onClick={() => setModalModifierLocataire(true)}
+            className="inline-flex items-center gap-[6px] px-[18px] py-2 rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-[13px] transition-all duration-100 hover:bg-glass-on-gradient-hover"
+          >
               <svg
                 width="13"
                 height="13"
@@ -135,7 +136,7 @@ export default function LocataireDetailPage() {
                 <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
               </svg>
               Modifier
-            </Link>
+            </button>
             <button
               onClick={handleDelete}
               className="inline-flex items-center gap-[6px] px-[18px] py-2 rounded-md font-body font-bold text-[13px] cursor-pointer transition-all duration-100"
@@ -197,10 +198,10 @@ export default function LocataireDetailPage() {
             </div>
           </div>
           <div className="flex gap-[6px] shrink-0">
-            <Link
-              href={`/dashboard/locataires/${locataire.id}/modifier`}
-              className="flex items-center justify-center w-[34px] h-[34px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
-            >
+          <button
+            onClick={() => setModalModifierLocataire(true)}
+            className="flex items-center justify-center w-[34px] h-[34px] rounded-md bg-glass-on-gradient border          border-glass-on-gradient-border transition-all duration-100 hover:bg-glass-on-gradient-hover"
+          >
               <svg
                 width="14"
                 height="14"
@@ -213,7 +214,7 @@ export default function LocataireDetailPage() {
               >
                 <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
               </svg>
-            </Link>
+            </button>
             <button
               onClick={handleDelete}
               className="flex items-center justify-center w-[34px] h-[34px] rounded-md cursor-pointer transition-all duration-100"
@@ -321,6 +322,14 @@ export default function LocataireDetailPage() {
           </div>
         </div>
       )}
+
+      {modalModifierLocataire && (
+        <ModalModificationLocataire
+          locataireId={id}
+          onClose={() => setModalModifierLocataire(false)}
+        />
+      )}
+
     </div>
   );
 }

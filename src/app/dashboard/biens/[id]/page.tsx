@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import ModalCreationLocataire from "@/components/ModalCreationLocataire";
+import ModalCreationChambre from "@/components/ModalCreationChambre";
+import ModalModificationBien from "@/components/ModalModificationBien";
 
 type Locataire = {
   id: number;
@@ -54,9 +56,17 @@ function getTypeColor(type: string) {
 export default function BienDetailPage() {
   const [bien, setBien] = useState<Bien | null>(null);
   const [locataires, setLocataires] = useState<Locataire[]>([]);
-  const [modalOuverte, setModalOuverte] = useState(false);
+  const [modalLocataire, setModalLocataire] = useState(false);
+  const [modalChambre, setModalChambre] = useState(false);
+  const [modalModifierBien, setModalModifierBien] = useState(false);
   const params = useParams();
   const id = params.id;
+
+  function fetchBien() {
+    fetch(`/api/biens/${id}`)
+      .then((res) => res.json())
+      .then((data) => setBien(data));
+  }
 
   function fetchLocataires() {
     fetch(`/api/biens/${id}/locataires`)
@@ -65,11 +75,6 @@ export default function BienDetailPage() {
   }
 
   useEffect(() => {
-    async function fetchBien() {
-      const response = await fetch(`/api/biens/${id}`);
-      const data = await response.json();
-      setBien(data);
-    }
     fetchBien();
     fetchLocataires();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,7 +175,7 @@ export default function BienDetailPage() {
         className="rounded-xl mt-4 mb-8 overflow-hidden"
         style={{
           background:
-            "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+            "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 60%, #1a2a4a 85%, #1a2a4a 100%)",
         }}
       >
         {/* Image */}
@@ -196,15 +201,15 @@ export default function BienDetailPage() {
             </span>
           </div>
           <div className="flex gap-2 shrink-0">
-            <Link
-              href={`/dashboard/biens/${bien.id}/modifier`}
-              className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-xs no-underline transition-all duration-100 hover:bg-glass-on-gradient-hover"
-            >
+          <button
+            onClick={() => setModalModifierBien(true)}
+            className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-xs transition-all duration-100 hover:bg-glass-on-gradient-hover"
+          >
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
               </svg>
               Modifier
-            </Link>
+            </button>
             <button
               onClick={handleDelete}
               className="inline-flex items-center gap-[6px] px-4 py-[7px] rounded-md font-body font-bold text-xs cursor-pointer transition-all duration-100"
@@ -339,8 +344,8 @@ export default function BienDetailPage() {
               Locataires
             </h2>
             <button
-              onClick={() => setModalOuverte(true)}
-              className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+              onClick={() => setModalLocataire(true)}
+              className="inline-flex items-center gap-2 bg-primary text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md active:scale-[0.97]"
             >
               <svg
                 width="14"
@@ -402,9 +407,9 @@ export default function BienDetailPage() {
             <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary">
               Chambres
             </h2>
-            <Link
-              href={`/dashboard/biens/${bien.id}/chambres/nouveau`}
-              className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+            <button
+              onClick={() => setModalChambre(true)}
+              className="inline-flex items-center gap-2 bg-primary text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md active:scale-[0.97]"
             >
               <svg
                 width="14"
@@ -418,7 +423,7 @@ export default function BienDetailPage() {
                 <path d="M7 1v12M1 7h12" />
               </svg>
               Ajouter une chambre
-            </Link>
+            </button>
           </div>
 
           {bien.sousBiens.length === 0 ? (
@@ -478,14 +483,33 @@ export default function BienDetailPage() {
       )}
 
       {/* Modale création locataire */}
-      {modalOuverte && (
+      {modalLocataire && (
         <ModalCreationLocataire
           bienId={id}
-          onClose={() => setModalOuverte(false)}
+          onClose={() => setModalLocataire(false)}
           onSuccess={() => {
-            setModalOuverte(false);
+            setModalLocataire(false);
             fetchLocataires();
           }}
+        />
+      )}
+
+      {/* Modale création chambre */}
+      {modalChambre && (
+        <ModalCreationChambre
+          bienId={id}
+          onClose={() => setModalChambre(false)}
+          onSuccess={() => {
+            setModalChambre(false);
+            fetchBien();
+          }}
+        />
+      )}
+
+      {modalModifierBien && (
+        <ModalModificationBien
+          bienId={id}
+          onClose={() => setModalModifierBien(false)}
         />
       )}
     </div>

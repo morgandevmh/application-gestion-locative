@@ -218,7 +218,7 @@ export default function DashboardLayout({
         className="fixed bottom-0 left-0 right-0 flex items-end justify-around md:hidden z-40"
         style={{
           height: 64,
-          background: "radial-gradient(ellipse 55% 120% at 50% 100%, #0071e3 0%, #14365d 40%, #1c1c1e 85%)",
+          background: "radial-gradient(ellipse 55% 120% at 50% 100%, #1a2a4a 0%, #1a2a4a 40%, #1c1c1e 85%)",
           borderTop: "1px solid rgba(255,255,255,0.08)",
           paddingBottom: "env(safe-area-inset-bottom, 6px)",
         }}
