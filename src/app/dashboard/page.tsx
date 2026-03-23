@@ -123,7 +123,7 @@ export default function DashboardPage() {
             className="rounded-xl px-6 py-4 flex items-center justify-between shrink-0"
             style={{
               background:
-                "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+                "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #1a2a4a 75%, #1a2a4a 100%)",
             }}
           >
             <div className="flex items-center gap-3">
@@ -363,7 +363,7 @@ export default function DashboardPage() {
             className="rounded-xl p-5 lg:flex-[70] min-h-0 overflow-hidden"
             style={{
               background:
-                "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+                "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #1a2a4a 75%, #1a2a4a 100%)",
             }}
           >
             <h3 className="font-heading py-2 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-white/45 mb-4">

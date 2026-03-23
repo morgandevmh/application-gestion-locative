@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import ModalCreationBien from "@/components/ModalCreationBien";
 
 type Bien = {
   id: number;
@@ -28,14 +29,18 @@ function getTypeColor(type: string) {
 export default function BiensPage() {
   const [biens, setBiens] = useState<Bien[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalOuverte, setModalOuverte] = useState(false);
+
+  function fetchBiens() {
+    fetch("/api/biens")
+      .then((res) => res.json())
+      .then((data) => {
+        setBiens(data);
+        setLoading(false);
+      });
+  }
 
   useEffect(() => {
-    async function fetchBiens() {
-      const response = await fetch("/api/biens");
-      const data = await response.json();
-      setBiens(data);
-      setLoading(false);
-    }
     fetchBiens();
   }, []);
 
@@ -62,9 +67,9 @@ export default function BiensPage() {
           )}
         </div>
         {biens.length > 0 && (
-          <Link
-            href="/dashboard/biens/nouveau"
-            className="inline-flex items-center gap-2 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+          <button
+            onClick={() => setModalOuverte(true)}
+            className="inline-flex items-center gap-2 bg-primary text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <svg
               width="14"
@@ -78,7 +83,7 @@ export default function BiensPage() {
               <path d="M7 1v12M1 7h12" />
             </svg>
             Ajouter un bien
-          </Link>
+          </button>
         )}
       </div>
 
@@ -106,9 +111,9 @@ export default function BiensPage() {
           <p className="font-body text-[13px] text-text-tertiary mt-1">
             Commencez par ajouter votre premier bien
           </p>
-          <Link
-            href="/dashboard/biens/nouveau"
-            className="inline-flex items-center gap-2 mt-5 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm no-underline transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+          <button
+            onClick={() => setModalOuverte(true)}
+            className="inline-flex items-center gap-2 mt-5 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
           >
             <svg
               width="14"
@@ -122,7 +127,7 @@ export default function BiensPage() {
               <path d="M7 1v12M1 7h12" />
             </svg>
             Ajouter un bien
-          </Link>
+          </button>
         </div>
       ) : (
         /* Grille de biens */
@@ -184,6 +189,17 @@ export default function BiensPage() {
             );
           })}
         </div>
+      )}
+
+      {/* Modale création bien */}
+      {modalOuverte && (
+        <ModalCreationBien
+          onClose={() => setModalOuverte(false)}
+          onSuccess={() => {
+            setModalOuverte(false);
+            fetchBiens();
+          }}
+        />
       )}
     </div>
   );

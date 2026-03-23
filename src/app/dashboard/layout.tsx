@@ -69,9 +69,11 @@ export default function DashboardLayout({
       {/* Sidebar — desktop */}
       <aside
         className="hidden md:flex flex-col fixed top-0 left-0 h-screen z-30"
+
         style={{
           width: "var(--sidebar-width)",
-          background: "linear-gradient(160deg, #1c1c1e 0%, #1c1c1e 40%, #14365d 75%, #0071e3 100%)",
+          background:
+            "linear-gradient(135deg, #0a0a0c 0%, #1c1c1e 35%, #1a2a4a 65%, #1c1c1e 100%)",
         }}
       >
         {/* Logo */}
