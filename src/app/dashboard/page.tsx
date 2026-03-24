@@ -115,7 +115,7 @@ export default function DashboardPage() {
     <div className="max-w-7xl mx-auto px-4 py-4 lg:h-[calc(100vh-2rem)] lg:overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_25%] gap-3 lg:h-full">
 
-        {/* ===== Colonne gauche ===== */}
+        {/* colonne gauche */}
         <div className="flex flex-col gap-3 lg:min-h-0">
 
           {/* M1 — Header gradient */}
@@ -301,7 +301,7 @@ export default function DashboardPage() {
                       onClick={() =>
                         router.push(`/dashboard/biens/${bien.id}`)
                       }
-                      className="rounded-lg border max-h-[200px] border-border hover:border-border-hover cursor-pointer transition-all duration-200 overflow-hidden flex flex-col hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+                      className="rounded-lg border max-h-[300px] border-border hover:border-border-hover cursor-pointer transition-all duration-200 overflow-hidden flex flex-col hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
                     >
                       <div className="flex-1 min-h-0 bg-surface">
                         {bien.image ? (
@@ -330,7 +330,7 @@ export default function DashboardPage() {
                           </div>
                         )}
                       </div>
-                      <div className="p-3 shrink-0">
+                      <div className="p-2 shrink-0">
                         <p className="font-heading font-medium text-sm text-text truncate m-0">
                           {bien.nom}
                         </p>
@@ -351,7 +351,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ===== Colonne droite ===== */}
+        {/* Colonne droite  */}
         <div className="flex flex-col gap-3 lg:min-h-0">
           {/* M2 — Calendrier */}
           <div className="bg-surface-elevated rounded-lg border border-border p-4 flex items-center justify-center shrink-0 lg:flex-[30]">

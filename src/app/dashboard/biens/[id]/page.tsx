@@ -121,11 +121,11 @@ export default function BienDetailPage() {
     0
   );
 
-  const chambresInoccupees = isColocation
-    ? bien.sousBiens.filter(
-        (chambre) => !chambre.locataires.some((loc) => loc.statut === "ACTIF")
-      ).length
-    : 0;
+  const chambresOccupees = isColocation
+  ? bien.sousBiens.filter(
+      (chambre) => chambre.locataires.some((loc) => loc.statut === "ACTIF")
+    ).length
+  : 0;
 
   return (
     <div className="max-w-[720px] mx-auto">
@@ -315,10 +315,10 @@ export default function BienDetailPage() {
             </div>
             <div className="bg-surface-elevated rounded-lg border border-border p-5">
               <p className="font-body text-xs text-text-tertiary m-0 mb-1">
-                Chambres inoccupées
+                Chambres Occupées
               </p>
               <p className="font-heading font-bold text-[32px] leading-9 tracking-[-0.02em] text-text m-0">
-                {chambresInoccupees}
+                {chambresOccupees}
                 <span className="text-text-tertiary text-[15px] font-normal ml-1">
                   / {bien.sousBiens.length}
                 </span>
@@ -506,6 +506,7 @@ export default function BienDetailPage() {
         />
       )}
 
+      {/* Modale création cbien */}
       {modalModifierBien && (
         <ModalModificationBien
           bienId={id}
