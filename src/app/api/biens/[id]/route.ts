@@ -72,13 +72,21 @@ export async function DELETE(
   
     const { id } = await params
     const bienId = Number(id)
-  
+
   
     const existingBien = await prisma.bien.findUnique({ where: { id: bienId } })
     if (!existingBien || existingBien.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Bien non trouvé" },
         { status: 404 }
+      )
+    }
+
+    const locataireCount = await prisma.locataire.count({ where: { bienId: bienId } })
+    if (locataireCount > 0) {
+      return NextResponse.json(
+        { error: "Veuillez supprimer les locataires avant de supprimer ce bien" },
+        { status: 400 }
       )
     }
   

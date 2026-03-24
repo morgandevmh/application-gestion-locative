@@ -113,7 +113,7 @@ export default function BiensPage() {
           </p>
           <button
             onClick={() => setModalOuverte(true)}
-            className="inline-flex items-center gap-2 mt-5 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+            className="inline-flex items-center gap-2 mt-5 bg-primary text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <svg
               width="14"

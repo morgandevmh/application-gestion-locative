@@ -86,13 +86,16 @@ export default function BienDetailPage() {
       "Êtes-vous sûr de vouloir supprimer ce bien ? (Si c'est une colocation vous supprimerez aussi les chambres)"
     );
     if (!confirmed) return;
-
+  
     const response = await fetch(`/api/biens/${id}`, {
       method: "DELETE",
     });
-
+  
     if (response.ok) {
       window.location.href = "/dashboard/biens";
+    } else {
+      const data = await response.json();
+      alert(data.error);
     }
   }
 
