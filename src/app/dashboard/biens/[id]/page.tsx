@@ -61,6 +61,7 @@ export default function BienDetailPage() {
   const [modalModifierBien, setModalModifierBien] = useState(false);
   const params = useParams();
   const id = params.id;
+  const router = useRouter();
 
   function fetchBien() {
     fetch(`/api/biens/${id}`)
@@ -150,24 +151,9 @@ export default function BienDetailPage() {
           Retour à la colocation
         </Link>
       ) : (
-        <Link
-          href="/dashboard/biens"
-          className="inline-flex items-center gap-1 font-body text-sm text-text-secondary no-underline transition-colors duration-200 hover:text-text"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M10 12L6 8l4-4" />
-          </svg>
-          Retour aux biens
-        </Link>
+        <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          ← Retour
+       </button>
       )}
 
       {/* Header card — gradient compact */}

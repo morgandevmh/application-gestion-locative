@@ -61,25 +61,10 @@ export default function LocataireDetailPage() {
   }
 
   return (
-    <div className="max-w-[720px] mx-auto">
+    <div className="max-w-3xl mx-auto">
       {/* Lien retour */}
-      <button
-        onClick={() => router.back()}
-        className="inline-flex items-center gap-1 font-body text-sm text-secondary bg-transparent border-none cursor-pointer p-0 mb-4 transition-colors duration-200 hover:text-text"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M10 12L6 8l4-4" />
-        </svg>
-        Retour
+      <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+         ← Retour
       </button>
 
       {/* Header card — gradient */}
