@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ModalCreationLocataire from "@/components/ModalCreationLocataire";
 import ModalCreationChambre from "@/components/ModalCreationChambre";
 import ModalModificationBien from "@/components/ModalModificationBien";
