@@ -1,6 +1,6 @@
 "use client";
-
 import { useState, useEffect } from "react";
+import ModalGestionPhotos from "@/components/ModalGestionPhotos";
 
 type Bien = {
   id: number;
@@ -22,6 +22,7 @@ export default function ModalModificationBien({
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [bien, setBien] = useState<Bien | null>(null);
+  const [showPhotos, setShowPhotos] = useState(false);
 
   useEffect(() => {
     async function fetchBien() {
@@ -44,7 +45,6 @@ export default function ModalModificationBien({
     const description = formData.get("description") as string;
 
     const newErrors: string[] = [];
-
     if (!nom.trim()) newErrors.push("Un nom est requis.");
     if (!adresse.trim()) newErrors.push("Veuillez ajouter une adresse.");
     if (!type.trim()) newErrors.push("Choisissez un type de bien.");
@@ -66,7 +66,7 @@ export default function ModalModificationBien({
       setErrors([result.error]);
       setIsLoading(false);
     } else {
-      window.location.href = `/dashboard/biens/${bienId}`;
+      setShowPhotos(true);
     }
   }
 
@@ -78,6 +78,17 @@ export default function ModalModificationBien({
     );
   }
 
+  if (showPhotos) {
+    return (
+      <ModalGestionPhotos
+        bienId={bienId as string}
+        onClose={() => {
+          window.location.href = `/dashboard/biens/${bienId}`;
+        }}
+      />
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center md:justify-end">
       {/* Overlay */}
@@ -85,10 +96,8 @@ export default function ModalModificationBien({
         className="absolute inset-0 bg-glass-overlay"
         onClick={onClose}
       />
-
       {/* Panel */}
       <div className="relative z-10 w-[90%] max-w-[440px] max-h-[85vh] md:w-[520px] md:max-w-none md:max-h-none md:h-full md:rounded-none rounded-xl bg-surface-elevated flex flex-col overflow-hidden shadow-xl">
-        
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
           <h2 className="font-heading font-bold text-[18px] text-text">
@@ -103,10 +112,8 @@ export default function ModalModificationBien({
             </svg>
           </button>
         </div>
-
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-
           {/* Errors */}
           {errors.length > 0 && (
             <div className="mb-5 rounded-lg border border-red bg-red-pastel p-4">
@@ -119,9 +126,7 @@ export default function ModalModificationBien({
               </ul>
             </div>
           )}
-
           <form id="form-modifier-bien" onSubmit={handleSubmit} className="space-y-5">
-
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Nom du bien *
@@ -132,7 +137,6 @@ export default function ModalModificationBien({
                 className="w-full border-[1.5px] border-border rounded-md bg-surface-elevated px-4 py-[10px] text-sm focus:border-accent focus:ring-3 focus:ring-glass-accent"
               />
             </div>
-
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Adresse *
@@ -143,7 +147,6 @@ export default function ModalModificationBien({
                 className="w-full border-[1.5px] border-border rounded-md bg-surface-elevated px-4 py-[10px] text-sm focus:border-accent focus:ring-3 focus:ring-glass-accent"
               />
             </div>
-
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Type de bien *
@@ -160,7 +163,6 @@ export default function ModalModificationBien({
                 <option value="COLOCATION">Colocation</option>
               </select>
             </div>
-
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Description
@@ -172,10 +174,8 @@ export default function ModalModificationBien({
                 className="w-full border-[1.5px] border-border rounded-md bg-surface-elevated px-4 py-[10px] text-sm resize-y focus:border-accent focus:ring-3 focus:ring-glass-accent"
               />
             </div>
-
           </form>
         </div>
-
         {/* Footer */}
         <div className="flex gap-3 px-6 py-4 border-t border-border">
           <button
@@ -184,7 +184,6 @@ export default function ModalModificationBien({
           >
             Annuler
           </button>
-
           <button
             type="submit"
             form="form-modifier-bien"

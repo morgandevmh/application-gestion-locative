@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { getFileUrl } from "@/lib/r2";
 
 export async function GET() {
   const session = await getSession();
@@ -75,7 +76,15 @@ export async function GET() {
       take: 6,
     });
 
-    const derniersBiens = biens.slice(0, 3);
+    const derniersBiens = await Promise.all(
+      biens.slice(0, 3).map(async (bien) => {
+        if (bien.photos.length > 0) {
+          const photoPrincipaleUrl = await getFileUrl(bien.photos[0]);
+          return { ...bien, photoPrincipaleUrl };
+        }
+        return { ...bien, photoPrincipaleUrl: null };
+      })
+    );
 
     return NextResponse.json({
       user: { name: session.user.name },

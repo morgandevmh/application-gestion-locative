@@ -11,49 +11,66 @@ export async function PUT(
     return NextResponse.json(
       { error: "Non autorisé" },
       { status: 401 }
-    )
+    );
   }
 
-  const { id } = await params
-  const bienId = Number(id)
+  const { id } = await params;
+  const bienId = Number(id);
+  const body = await request.json();
 
-  const body = await request.json()
-  const { nom, adresse, type, description } = body
+  const existingBien = await prisma.bien.findUnique({ where: { id: bienId } });
+  if (!existingBien || existingBien.userId !== session.user.id) {
+    return NextResponse.json(
+      { error: "Bien non trouvé" },
+      { status: 404 }
+    );
+  }
+
+  // Si c'est juste une mise à jour des photos
+  if (body.photos && !body.nom) {
+    try {
+      const bien = await prisma.bien.update({
+        where: { id: bienId },
+        data: { photos: body.photos },
+      });
+      return NextResponse.json(bien, { status: 200 });
+    } catch {
+      return NextResponse.json(
+        { error: "Erreur lors de la mise à jour des photos" },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Sinon, mise à jour classique
+  const { nom, adresse, type, description } = body;
 
   if (!nom || !adresse || !type) {
     return NextResponse.json(
       { error: "Champs requis manquants" },
       { status: 400 }
-    )
+    );
   }
 
-  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"]
+  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"];
   if (!validTypes.includes(type)) {
     return NextResponse.json(
       { error: "Type de bien invalide" },
       { status: 400 }
-    )
-  }
-
-  const existingBien = await prisma.bien.findUnique({ where: { id: bienId } })
-  if (!existingBien || existingBien.userId !== session.user.id) {
-    return NextResponse.json(
-      { error: "Bien non trouvé" },
-      { status: 404 }
-    )
+    );
   }
 
   try {
     const bien = await prisma.bien.update({
       where: { id: bienId },
-      data: { nom, adresse, type, description }
-    })
-    return NextResponse.json(bien, { status: 200 })
+      data: { nom, adresse, type, description },
+    });
+    return NextResponse.json(bien, { status: 200 });
   } catch {
     return NextResponse.json(
       { error: "Erreur lors de la modification du bien" },
       { status: 500 }
-    )
+    );
   }
 }
 

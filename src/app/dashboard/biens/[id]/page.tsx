@@ -41,6 +41,11 @@ type Bien = {
   sousBiens: SousBien[];
 };
 
+type Photo = {
+  key: string;
+  url: string;
+};
+
 const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
   APPARTEMENT: { bg: "bg-blue-pastel", text: "text-blue-text" },
   MAISON: { bg: "bg-green-pastel", text: "text-green-text" },
@@ -59,6 +64,8 @@ export default function BienDetailPage() {
   const [modalLocataire, setModalLocataire] = useState(false);
   const [modalChambre, setModalChambre] = useState(false);
   const [modalModifierBien, setModalModifierBien] = useState(false);
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const params = useParams();
   const id = params.id;
   const router = useRouter();
@@ -75,9 +82,16 @@ export default function BienDetailPage() {
       .then((data) => setLocataires(data));
   }
 
+  function fetchPhotos() {
+    fetch(`/api/biens/${id}/photos`)
+      .then((res) => res.json())
+      .then((data) => setPhotos(data));
+  }
+
   useEffect(() => {
     fetchBien();
     fetchLocataires();
+    fetchPhotos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -96,6 +110,42 @@ export default function BienDetailPage() {
     } else {
       const data = await response.json();
       alert(data.error);
+    }
+  }
+
+  async function handleUploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    const response = await fetch(`/api/biens/${id}/photos`, {
+      method: "POST",
+      body: formData,
+    });
+  
+    if (response.ok) {
+      fetchPhotos();
+    } else {
+      const data = await response.json();
+      alert(data.error);
+    }
+  }
+
+  async function handleDeletePhoto(key: string) {
+    const confirmed = window.confirm("Supprimer cette photo ?");
+    if (!confirmed) return;
+  
+    const response = await fetch(`/api/biens/${id}/photos`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key }),
+    });
+  
+    if (response.ok) {
+      setPhotoIndex(0);
+      fetchPhotos();
     }
   }
 
@@ -132,7 +182,7 @@ export default function BienDetailPage() {
   : 0;
 
   return (
-    <div className="max-w-[720px] mx-auto">
+    <div className="max-w-[920px] mx-auto">
       {/* Navigation retour */}
       {bien.parentId ? (
         <Link
@@ -168,14 +218,100 @@ export default function BienDetailPage() {
         }}
       >
         {/* Image */}
-        {bien.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={bien.image}
-            alt={bien.nom}
-            className="w-full h-56 object-cover"
-          />
-        )}
+        {/* Galerie photos */}
+        <div className="relative">
+          {photos.length > 0 ? (
+            <div className="flex">
+              {/* Photo principale */}
+              <div className="flex-1 relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photos[photoIndex]?.url}
+                  alt={`${bien.nom} - photo ${photoIndex + 1}`}
+                  className="w-full h-74 object-cover"
+                />
+                {/* Compteur */}
+                {photos.length > 1 && (
+                  <span className="absolute bottom-3 right-3 bg-black/60 text-white text-xs font-body px-2 py-1 rounded-md">
+                    {photoIndex + 1} / {photos.length}
+                  </span>
+                )}
+                
+                {/* Flèches navigation mobile */}
+                {photos.length > 1 && (
+                  <div className="flex md:hidden absolute inset-y-0 left-0 right-0 items-center justify-between px-2 pointer-events-none">
+                    <button
+                      onClick={() => setPhotoIndex(photoIndex === 0 ? photos.length - 1 : photoIndex - 1)}
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer pointer-events-auto"
+                    >
+                      <svg width="40" height="40" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"                strokeLinejoin="round">
+                        <path d="M10 12L6 8l4-4" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => setPhotoIndex(photoIndex === photos.length - 1 ? 0 : photoIndex + 1)}
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer pointer-events-auto"
+                    >
+                      <svg width="40" height="40" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"                strokeLinejoin="round">
+                        <path d="M6 4l4 4-4 4" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
+                {/* Bouton supprimer */}
+                <button
+                  onClick={() => handleDeletePhoto(photos[photoIndex].key)}
+                  className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-md bg-black/50 border-none         cursor-pointer transition-colors hover:bg-red-600/80"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"        strokeLinejoin="round">
+                    <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Miniatures à droite (desktop) */}
+              {photos.length > 1 && (
+                <div className="hidden md:flex flex-col w-32 max-h-74 overflow-y-auto gap-1 ml-1">
+                  {photos.map((photo, index) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={photo.key}
+                      src={photo.url}
+                      alt={`Miniature ${index + 1}`}
+                      onClick={() => setPhotoIndex(index)}
+                      className={`w-full h-20 object-cover cursor-pointer transition-opacity ${
+                        index === photoIndex ? "opacity-100" : "opacity-50 hover:opacity-75"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : bien.image ? (
+            // Fallback placeholder si aucune photo R2
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={bien.image}
+              alt={bien.nom}
+              className="w-full h-56 object-cover"
+            />
+          ) : null}
+
+          {/* Bouton upload */}
+          <label className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 text-white text-xs font-body font-bold px-3 py-2         rounded-md cursor-pointer transition-colors hover:bg-black/80">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <path d="M7 1v12M1 7h12" />
+            </svg>
+            Ajouter une photo
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleUploadPhoto}
+              className="hidden"
+            />
+          </label>
+        </div>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center justify-between flex-wrap gap-3 px-6 py-4">
@@ -197,7 +333,7 @@ export default function BienDetailPage() {
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10 1.5l2.5 2.5L5 11.5H2.5V9z" />
               </svg>
-              Modifier
+              Modifier ce bien
             </button>
             <button
               onClick={handleDelete}
@@ -217,7 +353,7 @@ export default function BienDetailPage() {
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 3.5h10M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
               </svg>
-              Supprimer
+              Supprimer ce bien
             </button>
           </div>
           <p className="font-body text-[13px] text-white/55 mt-1 m-0 w-full">

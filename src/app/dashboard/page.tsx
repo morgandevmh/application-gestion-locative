@@ -24,6 +24,7 @@ type DashboardData = {
     adresse: string;
     type: string;
     image: string | null;
+    photoPrincipaleUrl: string | null;
     updatedAt: string;
   }[];
 };
@@ -304,14 +305,14 @@ export default function DashboardPage() {
                       className="rounded-lg border max-h-[300px] border-border hover:border-border-hover cursor-pointer transition-all duration-200 overflow-hidden flex flex-col hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
                     >
                       <div className="flex-1 min-h-0 bg-surface">
-                        {bien.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={bien.image}
-                            alt={bien.nom}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
+                      {bien.photoPrincipaleUrl || bien.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={bien.photoPrincipaleUrl || bien.image!}
+                        alt={bien.nom}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <svg
                               width="24"
