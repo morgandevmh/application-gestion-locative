@@ -53,6 +53,7 @@ model Bien {
   description String?
   capacite    Int      @default(1)
   image       String?
+  photos      String[] @default([])
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
@@ -79,6 +80,9 @@ model Locataire {
   caution    Float
   statut     StatutLocataire @default(ACTIF)
   notes      String?
+  etatDesLieuxEntree  String?
+  etatDesLieuxSortie  String?
+  dossierLocatif      String?
 
   bien   Bien @relation(fields: [bienId], references: [id])
   bienId Int
