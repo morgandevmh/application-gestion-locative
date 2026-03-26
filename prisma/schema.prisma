@@ -27,6 +27,13 @@ enum StatutLocataire {
   SORTI
 }
 
+enum TypeBail {
+  MEUBLE
+  VIDE
+  ETUDIANT
+  MOBILITE
+}
+
 // MODELS
 
 model User {
@@ -108,20 +115,25 @@ model BailTemplate {
 }
 
 model Bail {
-  id      Int    @id @default(autoincrement())
-  contenu String
+  id                 Int       @id @default(autoincrement())
+  contenu            String
+  dateDebut          DateTime
+  dateFin            DateTime?
+  loyerEncadre       Float?
+  complementLoyer    Float     @default(0)
+  charges            Float     @default(0)
+  typeBail           TypeBail
+  pdfUrl             String?
 
-  template   BailTemplate @relation(fields: [templateId], references: [id])
-  templateId Int
-
-  bien   Bien @relation(fields: [bienId], references: [id])
-  bienId Int
-
+  template    BailTemplate @relation(fields: [templateId], references: [id])
+  templateId  Int
+  bien        Bien @relation(fields: [bienId], references: [id])
+  bienId      Int
   locataire   Locataire @relation(fields: [locataireId], references: [id])
   locataireId Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Session {
