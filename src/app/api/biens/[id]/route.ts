@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { getFileUrl } from "@/lib/r2";
 
 export async function PUT(
   request: Request,
@@ -129,29 +130,43 @@ export async function DELETE(
       return NextResponse.json(
         { error: "Non autorisé" },
         { status: 401 }
-      )
+      );
     }
   
-    const { id } = await params
-    const bienId = Number(id)
+    const { id } = await params;
+    const bienId = Number(id);
   
     const existingBien = await prisma.bien.findUnique({
       where: { id: bienId },
       include: {
         sousBiens: {
           include: {
-            locataires: true
-          }
-        }
-      }
-    })
+            locataires: true,
+          },
+        },
+      },
+    });
   
     if (!existingBien || existingBien.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Bien non trouvé" },
         { status: 404 }
-      )
+      );
     }
   
-    return NextResponse.json(existingBien, { status: 200 })
+    // Générer les URLs des photos des chambres
+    const sousBiensAvecPhotos = await Promise.all(
+      existingBien.sousBiens.map(async (chambre) => {
+        if (chambre.photos.length > 0) {
+          const photoPrincipaleUrl = await getFileUrl(chambre.photos[0]);
+          return { ...chambre, photoPrincipaleUrl };
+        }
+        return { ...chambre, photoPrincipaleUrl: null };
+      })
+    );
+  
+    return NextResponse.json(
+      { ...existingBien, sousBiens: sousBiensAvecPhotos },
+      { status: 200 }
+    );
   }

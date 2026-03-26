@@ -27,6 +27,7 @@ type SousBien = {
   type: string;
   description: string | null;
   image: string | null;
+  photoPrincipaleUrl: string | null;
   locataires: Locataire[];
 };
 
@@ -566,10 +567,10 @@ export default function BienDetailPage() {
                   className="group no-underline"
                 >
                   <div className="bg-surface-elevated rounded-lg border border-border overflow-hidden transition-all duration-200 group-hover:border-border-hover group-hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-                    {chambre.image ? (
+                  {chambre.photoPrincipaleUrl || chambre.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={chambre.image}
+                        src={chambre.photoPrincipaleUrl || chambre.image!}
                         alt={chambre.nom}
                         className="h-40 w-full object-cover"
                       />
