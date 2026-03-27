@@ -229,7 +229,7 @@ export default function BienDetailPage() {
                 <img
                   src={photos[photoIndex]?.url}
                   alt={`${bien.nom} - photo ${photoIndex + 1}`}
-                  className="w-full h-74 object-cover"
+                  className="w-full h-94 object-cover"
                 />
                 {/* Compteur */}
                 {photos.length > 1 && (
