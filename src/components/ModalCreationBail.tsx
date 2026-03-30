@@ -131,7 +131,7 @@ export default function ModalCreationBail({
         loyerEncadre: loyerEncadre ? parseFloat(loyerEncadre) : null,
         complementLoyer: parseFloat(complementLoyer) || 0,
         charges: parseFloat(charges) || 0,
-        contenu: "",
+        contenu: "Bail en cours de rédaction",
       }),
     });
 
