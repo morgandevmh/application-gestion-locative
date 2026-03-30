@@ -62,7 +62,6 @@ export default function ModalCreationBail({
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Charger biens et templates au montage
   useEffect(() => {
     fetch("/api/biens")
       .then((res) => res.json())
@@ -73,7 +72,6 @@ export default function ModalCreationBail({
       .then((data) => setTemplates(data));
   }, []);
 
-  // Charger locataires quand le bien change
   useEffect(() => {
     if (!bienId) {
       setLocataires([]);
@@ -89,7 +87,6 @@ export default function ModalCreationBail({
       });
   }, [bienId]);
 
-  // Recalculer date fin quand date début ou type change
   useEffect(() => {
     if (dateDebut && typeBail) {
       setDateFin(calculerDateFin(dateDebut, typeBail));
@@ -140,21 +137,25 @@ export default function ModalCreationBail({
       setErrors([result.error]);
       setIsLoading(false);
     } else {
+      const result = await response.json();
+
+      // Générer le PDF automatiquement
+      await fetch(`/api/baux/${result.id}/generer`, {
+        method: "POST",
+      });
+
       onSuccess();
     }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center md:justify-end">
-      {/* Overlay */}
       <div
         className="absolute inset-0 bg-glass-overlay"
         onClick={onClose}
       />
 
-      {/* Panel */}
       <div className="relative z-10 w-[90%] max-w-[440px] max-h-[85vh] md:w-[520px] md:max-w-none md:max-h-none md:h-full md:rounded-none rounded-xl bg-surface-elevated flex flex-col overflow-hidden shadow-xl">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
           <h2 className="font-heading font-bold text-[18px] leading-6 tracking-[-0.01em] text-text m-0">
             Nouveau bail
@@ -178,9 +179,7 @@ export default function ModalCreationBail({
           </button>
         </div>
 
-        {/* Formulaire scrollable */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {/* Erreurs */}
           {errors.length > 0 && (
             <div className="mb-5 rounded-lg border border-red bg-red-pastel p-4">
               <ul className="space-y-1 list-none m-0 p-0">
@@ -194,7 +193,6 @@ export default function ModalCreationBail({
           )}
 
           <form id="form-bail" onSubmit={handleSubmit} className="space-y-5">
-            {/* Bien */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Bien *
@@ -213,7 +211,6 @@ export default function ModalCreationBail({
               </select>
             </div>
 
-            {/* Locataire */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Locataire *
@@ -237,7 +234,6 @@ export default function ModalCreationBail({
               </select>
             </div>
 
-            {/* Template */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Template *
@@ -261,7 +257,6 @@ export default function ModalCreationBail({
               )}
             </div>
 
-            {/* Type de bail */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Type de bail *
@@ -279,7 +274,6 @@ export default function ModalCreationBail({
               </select>
             </div>
 
-            {/* Dates */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
@@ -308,7 +302,6 @@ export default function ModalCreationBail({
               </div>
             </div>
 
-            {/* Loyers */}
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
@@ -351,7 +344,6 @@ export default function ModalCreationBail({
               </div>
             </div>
 
-            {/* Loyer total */}
             <div className="bg-surface rounded-lg p-3 flex items-center justify-between">
               <p className="font-body text-[13px] text-text-secondary m-0">
                 Loyer total
@@ -366,7 +358,6 @@ export default function ModalCreationBail({
           </form>
         </div>
 
-        {/* Footer */}
         <div className="flex gap-3 px-6 py-4 border-t border-border shrink-0">
           <button
             type="button"

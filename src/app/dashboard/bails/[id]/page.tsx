@@ -13,6 +13,7 @@ type Bail = {
   charges: number;
   typeBail: string;
   pdfUrl: string | null;
+  pdfPresignedUrl: string | null;
   createdAt: string;
   bien: {
     id: number;
@@ -286,9 +287,9 @@ export default function BailDetailPage() {
               </p>
             </div>
           </div>
-          {bail.pdfUrl ? (
+          {bail.pdfPresignedUrl ? (
             <a
-              href={bail.pdfUrl}
+              href={bail.pdfPresignedUrl || ""}
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text no-underline transition-colors hover:bg-glass-medium"

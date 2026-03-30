@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { getFileUrl } from "@/lib/r2";
 
 export async function GET(
   request: Request,
@@ -27,7 +28,13 @@ export async function GET(
     return NextResponse.json({ error: "Bail non trouvé" }, { status: 404 });
   }
 
-  return NextResponse.json(bail);
+  // Générer l'URL présignée si un PDF existe
+  let pdfPresignedUrl = null;
+  if (bail.pdfUrl) {
+    pdfPresignedUrl = await getFileUrl(bail.pdfUrl);
+  }
+
+  return NextResponse.json({ ...bail, pdfPresignedUrl });
 }
 
 export async function PUT(
