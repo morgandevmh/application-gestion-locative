@@ -258,7 +258,7 @@ export const TEMPLATE_MEUBLE_CLASSIQUE = {
     BIEN_DESCRIPTION: { source: "auto", description: "Description du bien" },
     CAUTION: { source: "auto", description: "Montant du dépôt de garantie" },
   
-    // Formulaire — saisi par l'utilisateur
+    // Formulaire 
     DATE_DEBUT: { source: "formulaire", description: "Date de début du bail" },
     DATE_FIN: { source: "formulaire", description: "Date de fin du bail" },
     DUREE: { source: "formulaire", description: "Durée du bail en mois" },
@@ -267,7 +267,7 @@ export const TEMPLATE_MEUBLE_CLASSIQUE = {
     CHARGES: { source: "formulaire", description: "Montant des charges" },
     LOYER_TOTAL: { source: "formulaire", description: "Loyer total charges comprises" },
   
-    // Génération — automatique
+    // Génération automatique
     DATE_GENERATION: { source: "auto", description: "Date de génération du bail" },
     LIEU_SIGNATURE: { source: "formulaire", description: "Lieu de signature" },
   } as const;

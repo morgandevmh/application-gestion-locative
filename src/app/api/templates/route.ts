@@ -20,6 +20,7 @@ export async function POST(request: Request) {
       data: {
         nom,
         contenu,
+        isDefault: false,
         userId: session.user.id,
       },
     });
@@ -35,13 +36,16 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
-
   try {
     const templates = await prisma.bailTemplate.findMany({
-      where: { userId: session.user.id },
+      where: {
+        OR: [
+          { userId: session.user.id },
+          { isDefault: true },
+        ],
+      },
       orderBy: { createdAt: "desc" },
     });
-
     return NextResponse.json(templates);
   } catch {
     return NextResponse.json({ error: "Erreur lors de la récupération des templates" }, { status: 500 });

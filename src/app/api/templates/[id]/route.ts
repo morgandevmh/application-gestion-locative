@@ -17,11 +17,9 @@ export async function GET(
   const template = await prisma.bailTemplate.findUnique({
     where: { id: templateId },
   });
-
-  if (!template || template.userId !== session.user.id) {
+  if (!template || (template.userId !== session.user.id && !template.isDefault)) {
     return NextResponse.json({ error: "Template non trouvé" }, { status: 404 });
   }
-
   return NextResponse.json(template);
 }
 
@@ -40,8 +38,16 @@ export async function PUT(
   const existing = await prisma.bailTemplate.findUnique({
     where: { id: templateId },
   });
-
-  if (!existing || existing.userId !== session.user.id) {
+  if (!existing) {
+    return NextResponse.json({ error: "Template non trouvé" }, { status: 404 });
+  }
+  if (existing.isDefault) {
+    return NextResponse.json(
+      { error: "Impossible de modifier un template par défaut" },
+      { status: 403 }
+    );
+  }
+  if (existing.userId !== session.user.id) {
     return NextResponse.json({ error: "Template non trouvé" }, { status: 404 });
   }
 
@@ -71,22 +77,42 @@ export async function DELETE(
   if (!session) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
-
   const { id } = await params;
   const templateId = Number(id);
 
   const existing = await prisma.bailTemplate.findUnique({
     where: { id: templateId },
   });
-
-  if (!existing || existing.userId !== session.user.id) {
+  if (!existing) {
     return NextResponse.json({ error: "Template non trouvé" }, { status: 404 });
+  }
+  if (existing.isDefault) {
+    return NextResponse.json(
+      { error: "Impossible de supprimer un template par défaut" },
+      { status: 403 }
+    );
+  }
+  if (existing.userId !== session.user.id) {
+    return NextResponse.json({ error: "Template non trouvé" }, { status: 404 });
+  }
+
+  const nbBaux = await prisma.bail.count({
+    where: { templateId },
+  });
+  if (nbBaux > 0) {
+    const message = nbBaux === 1
+      ? "Impossible de supprimer ce template, 1 bail l'utilise."
+      : `Impossible de supprimer ce template, ${nbBaux} baux l'utilisent.`;
+    return NextResponse.json({ error: message }, { status: 409 });
   }
 
   try {
     await prisma.bailTemplate.delete({ where: { id: templateId } });
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: "Erreur lors de la suppression du template" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erreur lors de la suppression du template" },
+      { status: 500 }
+    );
   }
 }
