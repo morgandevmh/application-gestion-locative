@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { uploadFile, getFileUrl } from "@/lib/r2";
-import { TEMPLATE_MEUBLE_CLASSIQUE, remplirTemplate } from "@/lib/bail-templates/meuble-classique";
+import { remplirTemplate } from "@/lib/bail-templates/meuble-classique";
 import { genererBailPDF } from "@/lib/bail-pdf";
+
 
 const TYPE_BAIL_DUREES: Record<string, number> = {
   MEUBLE: 12,
@@ -35,11 +36,14 @@ export async function POST(
   const bail = await prisma.bail.findUnique({
     where: { id: bailId },
     include: {
-      bien: true,
+      bien: {
+        include: { parent: true },
+      },
       locataire: true,
       template: true,
     },
   });
+  
 
   if (!bail || bail.bien.userId !== session.user.id) {
     return NextResponse.json({ error: "Bail non trouvé" }, { status: 404 });
@@ -51,14 +55,18 @@ export async function POST(
 
     const duree = TYPE_BAIL_DUREES[bail.typeBail] || 12;
 
+    const estChambre = bail.bien.type === "CHAMBRE";
+    const bienReference = estChambre ? bail.bien.parent! : bail.bien;
+
     const donnees: Record<string, string> = {
       BAILLEUR_NOM: session.user.name || "Non renseigné",
       LOCATAIRE_NOM: bail.locataire.nom,
-      BIEN_ADRESSE: bail.bien.adresse,
-      BIEN_TYPE: TYPE_BIEN_LABELS[bail.bien.type] || bail.bien.type,
-      BIEN_DESCRIPTION: bail.bien.description || "Voir état des lieux",
+      BIEN_ADRESSE: bienReference.adresse,
+      BIEN_TYPE: TYPE_BIEN_LABELS[bienReference.type] || bienReference.type,
+      BIEN_DESCRIPTION: bienReference.description || "Voir état des lieux",
+      CHAMBRE_NOM: estChambre ? bail.bien.nom : "",
+      CHAMBRE_DESCRIPTION: estChambre ? bail.bien.description || "" : "",
       CAUTION: bail.locataire.caution.toLocaleString("fr-FR"),
-
       DATE_DEBUT: new Date(bail.dateDebut).toLocaleDateString("fr-FR"),
       DATE_FIN: bail.dateFin
         ? new Date(bail.dateFin).toLocaleDateString("fr-FR")
@@ -70,15 +78,13 @@ export async function POST(
       COMPLEMENT_LOYER: bail.complementLoyer.toLocaleString("fr-FR"),
       CHARGES: bail.charges.toLocaleString("fr-FR"),
       LOYER_TOTAL: loyerTotal.toLocaleString("fr-FR"),
-
       DATE_GENERATION: new Date().toLocaleDateString("fr-FR"),
-      LIEU_SIGNATURE: bail.bien.adresse.split(",").pop()?.trim() || "Non renseigné",
+      LIEU_SIGNATURE: bienReference.adresse.split(",").pop()?.trim() || "Non renseigné",
     };
 
-    const articlesRemplis = remplirTemplate(
-      TEMPLATE_MEUBLE_CLASSIQUE.articles,
-      donnees
-    );
+    const articles = JSON.parse(bail.template.contenu) as Record<string, { titre: string; contenu: string }>;
+
+    const articlesRemplis = remplirTemplate(articles, donnees);
 
     const pdfBuffer = await genererBailPDF(
       "CONTRAT DE LOCATION MEUBLÉE CONSTITUANT LA RÉSIDENCE PRINCIPALE DU LOCATAIRE",

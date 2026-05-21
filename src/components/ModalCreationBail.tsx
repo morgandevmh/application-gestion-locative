@@ -6,6 +6,7 @@ type Bien = {
   id: number;
   nom: string;
   type: string;
+  parent?: { nom: string } | null;
 };
 
 type Locataire = {
@@ -63,7 +64,7 @@ export default function ModalCreationBail({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/biens")
+    fetch("/api/biens?louables=true")
       .then((res) => res.json())
       .then((data) => setBiens(data));
 
@@ -205,7 +206,7 @@ export default function ModalCreationBail({
                 <option value="">Sélectionner un bien</option>
                 {biens.map((bien) => (
                   <option key={bien.id} value={bien.id}>
-                    {bien.nom}
+                    {bien.parent ? `${bien.parent.nom} — ${bien.nom}` : bien.nom}
                   </option>
                 ))}
               </select>

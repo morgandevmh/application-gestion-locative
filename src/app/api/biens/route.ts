@@ -59,39 +59,45 @@ export async function POST (request: Request) {
 }
 
 //READ R 
-export async function GET() {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json(
-        { error: "Non autorisé" },
-        { status: 401 }
-      );
-    }
-  
-    try {
-      const biens = await prisma.bien.findMany({
-        where: {
-          userId: session.user.id,
-          type: { not: "CHAMBRE" },
-        },
-      });
-  
-      // Générer l'URL présignée de la photo principale pour chaque bien
-      const biensAvecPhotos = await Promise.all(
-        biens.map(async (bien) => {
-          if (bien.photos.length > 0) {
-            const photoUrl = await getFileUrl(bien.photos[0]);
-            return { ...bien, photoPrincipaleUrl: photoUrl };
-          }
-          return { ...bien, photoPrincipaleUrl: null };
-        })
-      );
-  
-      return NextResponse.json(biensAvecPhotos, { status: 200 });
-    } catch {
-      return NextResponse.json(
-        { error: "Erreur lors de la récupération des biens" },
-        { status: 500 }
-      );
-    }
+export async function GET(request: Request) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json(
+      { error: "Non autorisé" },
+      { status: 401 }
+    );
   }
+
+  const { searchParams } = new URL(request.url);
+  const louables = searchParams.get("louables") === "true";
+
+  try {
+    const biens = await prisma.bien.findMany({
+      where: {
+        userId: session.user.id,
+        type: louables
+          ? { not: "COLOCATION" as const }
+          : { not: "CHAMBRE" as const },
+      },
+      include: louables
+        ? { parent: { select: { nom: true } } }
+        : undefined,
+    });
+    // Générer l'URL présignée de la photo principale pour chaque bien
+    const biensAvecPhotos = await Promise.all(
+      biens.map(async (bien) => {
+        if (bien.photos.length > 0) {
+          const photoUrl = await getFileUrl(bien.photos[0]);
+          return { ...bien, photoPrincipaleUrl: photoUrl };
+        }
+        return { ...bien, photoPrincipaleUrl: null };
+      })
+    );
+    return NextResponse.json(biensAvecPhotos, { status: 200 });
+  } catch {
+    return NextResponse.json(
+      { error: "Erreur lors de la récupération des biens" },
+      { status: 500 }
+    );
+  }
+}
