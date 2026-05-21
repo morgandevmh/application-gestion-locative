@@ -87,7 +87,7 @@ export async function POST(
     const articlesRemplis = remplirTemplate(articles, donnees);
 
     const pdfBuffer = await genererBailPDF(
-      "CONTRAT DE LOCATION MEUBLÉE CONSTITUANT LA RÉSIDENCE PRINCIPALE DU LOCATAIRE",
+      bail.template.titre,
       articlesRemplis
     );
 

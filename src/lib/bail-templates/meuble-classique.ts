@@ -2,9 +2,10 @@
 // Les placeholders {{...}} seront remplacés par les vraies données lors de la génération
 
 export const TEMPLATE_MEUBLE_CLASSIQUE = {
-    id: "meuble_classique",
-    nom: "Bail meublé classique",
-    articles: {
+  id: "meuble_classique",
+  nom: "Bail meublé classique",
+  titre: "CONTRAT DE LOCATION MEUBLÉE",
+  articles: {
       identite: {
         titre: "IDENTITÉ DES PARTIES",
         contenu: `Entre les soussignés :

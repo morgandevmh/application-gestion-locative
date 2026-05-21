@@ -103,6 +103,7 @@ model Locataire {
 model BailTemplate {
   id      Int    @id @default(autoincrement())
   nom     String
+  titre     String
   contenu String
   isDefault Boolean  @default(false)
 

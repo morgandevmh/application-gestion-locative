@@ -11,6 +11,7 @@ const prisma = new PrismaClient({ adapter });
 
 type Template = {
   nom: string;
+  titre: string;
   articles: Record<string, { titre: string; contenu: string }>;
 };
 
@@ -30,6 +31,7 @@ async function seedTemplate(template: Template) {
   const created = await prisma.bailTemplate.create({
     data: {
       nom: template.nom,
+      titre: template.titre, 
       contenu: JSON.stringify(template.articles),
       isDefault: true,
       userId: null,

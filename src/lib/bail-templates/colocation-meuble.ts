@@ -5,6 +5,7 @@
 export const TEMPLATE_COLOCATION_MEUBLE = {
     id: "colocation_meuble",
     nom: "Bail meublé en colocation",
+    titre: "CONTRAT DE LOCATION MEUBLÉE EN COLOCATION",
     articles: {
       identite: {
         titre: "IDENTITÉ DES PARTIES",
