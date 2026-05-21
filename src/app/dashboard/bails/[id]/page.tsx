@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import ModalModificationBail from "@/components/ModalModificationBail";
 
 type Bail = {
   id: number;
@@ -15,9 +16,13 @@ type Bail = {
   pdfUrl: string | null;
   pdfPresignedUrl: string | null;
   createdAt: string;
+  bienId: number;
+  locataireId: number;
+  templateId: number;
   bien: {
     id: number;
     nom: string;
+    parent?: { nom: string } | null;
   };
   locataire: {
     id: number;
@@ -47,6 +52,7 @@ export default function BailDetailPage() {
   const params = useParams();
   const id = params.id;
   const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetch(`/api/baux/${id}`)
@@ -128,7 +134,7 @@ export default function BailDetailPage() {
           </div>
           <div className="flex gap-2 shrink-0">
             <button
-              onClick={() => router.push(`/dashboard/bails/${bail.id}/modifier`)}
+              onClick={() => setModalOpen(true)}
               className="inline-flex items-center gap-[6px] px-[18px] py-2 rounded-md bg-glass-on-gradient border border-glass-on-gradient-border text-white font-body font-bold text-[13px] transition-all duration-100 hover:bg-glass-on-gradient-hover"
             >
               <svg
@@ -207,7 +213,7 @@ export default function BailDetailPage() {
           </div>
           <div className="flex gap-[6px] shrink-0">
             <button
-              onClick={() => router.push(`/dashboard/bails/${bail.id}/modifier`)}
+              onClick={() => setModalOpen(true)}
               className="flex items-center justify-center w-[34px] h-[34px] rounded-md bg-glass-on-gradient border border-glass-on-gradient-border transition-all duration-100 hover:bg-glass-on-gradient-hover"
             >
               <svg
@@ -395,6 +401,19 @@ export default function BailDetailPage() {
           </div>
         </div>
       </div>
+      {modalOpen && (
+        <ModalModificationBail
+          bail={bail}
+          onClose={() => setModalOpen(false)}
+          onSuccess={() => {
+            setModalOpen(false);
+            // Refetch les données du bail pour afficher les nouvelles valeurs
+            fetch(`/api/baux/${id}`)
+              .then((res) => res.json())
+              .then((data) => setBail(data));
+          }}
+        />
+      )}
     </div>
   );
 }
