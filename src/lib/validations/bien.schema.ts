@@ -24,3 +24,10 @@ export const updateBienSchema = createBienSchema
   .partial();
 
 export type UpdateBienInput = z.infer<typeof updateBienSchema>;
+
+export const createChambreSchema = z.object({
+    nom: z.string(),
+    description: z.string().optional().nullable(),
+  });
+  
+  export type CreateChambreInput = z.infer<typeof createChambreSchema>;
