@@ -15,3 +15,12 @@ export const createBienSchema = z.object({
 });
 
 export type CreateBienInput = z.infer<typeof createBienSchema>;
+
+export const updateBienSchema = createBienSchema
+  .omit({ type: true })
+  .extend({
+    photos: z.array(z.string()).optional(),
+  })
+  .partial();
+
+export type UpdateBienInput = z.infer<typeof updateBienSchema>;
