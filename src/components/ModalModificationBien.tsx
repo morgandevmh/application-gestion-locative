@@ -6,7 +6,6 @@ type Bien = {
   id: number;
   nom: string;
   adresse: string;
-  type: string;
   description: string | null;
 };
 
@@ -37,30 +36,28 @@ export default function ModalModificationBien({
     e.preventDefault();
     setErrors([]);
     setIsLoading(true);
-
+  
     const formData = new FormData(e.currentTarget);
     const nom = formData.get("nom") as string;
     const adresse = formData.get("adresse") as string;
-    const type = formData.get("type") as string;
     const description = formData.get("description") as string;
-
+  
     const newErrors: string[] = [];
     if (!nom.trim()) newErrors.push("Un nom est requis.");
     if (!adresse.trim()) newErrors.push("Veuillez ajouter une adresse.");
-    if (!type.trim()) newErrors.push("Choisissez un type de bien.");
-
+  
     if (newErrors.length > 0) {
       setErrors(newErrors);
       setIsLoading(false);
       return;
     }
-
+  
     const response = await fetch(`/api/biens/${bienId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nom, adresse, type, description }),
+      body: JSON.stringify({ nom, adresse, description }),
     });
-
+  
     if (!response.ok) {
       const result = await response.json();
       setErrors([result.error]);
@@ -146,22 +143,6 @@ export default function ModalModificationBien({
                 defaultValue={bien.adresse}
                 className="w-full border-[1.5px] border-border rounded-md bg-surface-elevated px-4 py-[10px] text-sm focus:border-accent focus:ring-3 focus:ring-glass-accent"
               />
-            </div>
-            <div>
-              <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
-                Type de bien *
-              </label>
-              <select
-                name="type"
-                defaultValue={bien.type}
-                className="w-full border-[1.5px] border-border rounded-md bg-surface-elevated px-4 py-[10px] text-sm focus:border-accent focus:ring-3 focus:ring-glass-accent"
-              >
-                <option value="">Choisir un type</option>
-                <option value="APPARTEMENT">Appartement</option>
-                <option value="MAISON">Maison</option>
-                <option value="STUDIO">Studio</option>
-                <option value="COLOCATION">Colocation</option>
-              </select>
             </div>
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
