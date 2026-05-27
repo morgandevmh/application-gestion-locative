@@ -12,6 +12,7 @@ type Bien = {
   type: string;
   description: string | null;
   image: string | null;
+  photoPrincipaleUrl: string | null;
 };
 
 const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
@@ -113,7 +114,7 @@ export default function BiensPage() {
           </p>
           <button
             onClick={() => setModalOuverte(true)}
-            className="inline-flex items-center gap-2 mt-5 bg-accent text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-100 hover:bg-accent-hover hover:shadow-md active:scale-[0.97]"
+            className="inline-flex items-center gap-2 mt-5 bg-primary text-white px-[22px] py-[10px] rounded-md font-body font-bold text-sm border-none cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <svg
               width="14"
@@ -142,14 +143,14 @@ export default function BiensPage() {
               >
                 <div className="bg-surface-elevated rounded-lg border border-border overflow-hidden transition-all duration-200 group-hover:border-border-hover group-hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                   {/* Image */}
-                  {bien.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={bien.image}
-                      alt={bien.nom}
-                      className="h-44 w-full object-cover"
-                    />
-                  ) : (
+                  {bien.photoPrincipaleUrl || bien.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={bien.photoPrincipaleUrl || bien.image!}
+                    alt={bien.nom}
+                    className="h-44 w-full object-cover"
+                  />
+                ) : (
                     <div className="h-44 bg-surface flex items-center justify-center">
                       <svg
                         width="32"

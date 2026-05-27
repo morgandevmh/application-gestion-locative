@@ -21,12 +21,25 @@ type Locataire = {
   };
 };
 
+type Documents = {
+  etatDesLieuxEntree: string | null;
+  etatDesLieuxSortie: string | null;
+  dossierLocatif: string | null;
+};
+
 export default function LocataireDetailPage() {
   const [locataire, setLocataire] = useState<Locataire | null>(null);
+  const [documents, setDocuments] = useState<Documents | null>(null);
   const [modalModifierLocataire, setModalModifierLocataire] = useState(false);
   const params = useParams();
   const id = params.id;
   const router = useRouter();
+
+  function fetchDocuments() {
+    fetch(`/api/locataires/${id}/documents`)
+      .then((res) => res.json())
+      .then((data) => setDocuments(data));
+  }
 
   useEffect(() => {
     async function fetchLocataire() {
@@ -35,6 +48,8 @@ export default function LocataireDetailPage() {
       setLocataire(data);
     }
     fetchLocataire();
+    fetchDocuments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function handleDelete() {
@@ -52,6 +67,45 @@ export default function LocataireDetailPage() {
     }
   }
 
+  async function handleUploadDocument(
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: string
+  ) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("field", field);
+
+    const response = await fetch(`/api/locataires/${id}/documents`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      fetchDocuments();
+    } else {
+      const data = await response.json();
+      alert(data.error);
+    }
+
+    e.target.value = "";
+  }
+
+  async function handleDeleteDocument(field: string) {
+    const confirmed = window.confirm("Supprimer ce document ?");
+    if (!confirmed) return;
+
+    await fetch(`/api/locataires/${id}/documents`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ field }),
+    });
+
+    fetchDocuments();
+  }
+
   if (!locataire) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -61,7 +115,7 @@ export default function LocataireDetailPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-[920px] mx-auto">
       {/* Lien retour */}
       <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
          ← Retour
@@ -294,6 +348,156 @@ export default function LocataireDetailPage() {
         </div>
       </div>
 
+      {/* Documents */}
+      <div className="mb-8">
+        <h2 className="font-heading font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3">
+          Documents
+        </h2>
+        <div className="bg-surface-elevated rounded-lg border border-border p-5 flex flex-col gap-4">
+          {/* État des lieux — Entrée */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-body text-[15px] text-text m-0">
+                État des lieux — Entrée
+              </p>
+              <p className="font-body text-xs text-text-tertiary m-0 mt-[2px]">
+                {documents?.etatDesLieuxEntree ? "PDF uploadé" : "Aucun fichier"}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {documents?.etatDesLieuxEntree ? (
+                <>
+                  <a
+                    href={documents.etatDesLieuxEntree}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text no-underline transition-colors hover:bg-glass-medium"
+                  >
+                    Voir
+                  </a>
+                  <button
+                    onClick={() => handleDeleteDocument("etatDesLieuxEntree")}
+                    className="px-3 py-[6px] rounded-md font-body font-bold text-xs border-none cursor-pointer transition-colors"
+                    style={{
+                      background: "rgba(255, 69, 58, 0.1)",
+                      color: "#ff453a",
+                    }}
+                  >
+                    Supprimer
+                  </button>
+                </>
+              ) : (
+                <label className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text cursor-pointer transition-colors hover:bg-glass-medium">
+                  Uploader
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => handleUploadDocument(e, "etatDesLieuxEntree")}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-border" />
+
+          {/* État des lieux — Sortie */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-body text-[15px] text-text m-0">
+                État des lieux — Sortie
+              </p>
+              <p className="font-body text-xs text-text-tertiary m-0 mt-[2px]">
+                {documents?.etatDesLieuxSortie ? "PDF uploadé" : "Aucun fichier"}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {documents?.etatDesLieuxSortie ? (
+                <>
+                  <a
+                    href={documents.etatDesLieuxSortie}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text no-underline transition-colors hover:bg-glass-medium"
+                  >
+                    Voir
+                  </a>
+                  <button
+                    onClick={() => handleDeleteDocument("etatDesLieuxSortie")}
+                    className="px-3 py-[6px] rounded-md font-body font-bold text-xs border-none cursor-pointer transition-colors"
+                    style={{
+                      background: "rgba(255, 69, 58, 0.1)",
+                      color: "#ff453a",
+                    }}
+                  >
+                    Supprimer
+                  </button>
+                </>
+              ) : (
+                <label className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text cursor-pointer transition-colors hover:bg-glass-medium">
+                  Uploader
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => handleUploadDocument(e, "etatDesLieuxSortie")}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-border" />
+
+          {/* Dossier locatif */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-body text-[15px] text-text m-0">
+                Dossier locataire
+              </p>
+              <p className="font-body text-xs text-text-tertiary m-0 mt-[2px]">
+                {documents?.dossierLocatif ? "PDF uploadé" : "Aucun fichier"}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {documents?.dossierLocatif ? (
+                <>
+                  <a
+                    href={documents.dossierLocatif}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text no-underline transition-colors hover:bg-glass-medium"
+                  >
+                    Voir
+                  </a>
+                  <button
+                    onClick={() => handleDeleteDocument("dossierLocatif")}
+                    className="px-3 py-[6px] rounded-md font-body font-bold text-xs border-none cursor-pointer transition-colors"
+                    style={{
+                      background: "rgba(255, 69, 58, 0.1)",
+                      color: "#ff453a",
+                    }}
+                  >
+                    Supprimer
+                  </button>
+                </>
+              ) : (
+                <label className="px-3 py-[6px] rounded-md bg-glass-light border border-glass-border font-body font-bold text-xs text-text cursor-pointer transition-colors hover:bg-glass-medium">
+                  Uploader
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => handleUploadDocument(e, "dossierLocatif")}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Notes */}
       {locataire.notes && (
         <div className="mb-8">
@@ -314,7 +518,6 @@ export default function LocataireDetailPage() {
           onClose={() => setModalModifierLocataire(false)}
         />
       )}
-
     </div>
   );
 }

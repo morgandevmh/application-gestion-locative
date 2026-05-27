@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { getFileUrl } from "@/lib/r2";
 
 export async function PUT(
   request: Request,
@@ -11,49 +12,66 @@ export async function PUT(
     return NextResponse.json(
       { error: "Non autorisé" },
       { status: 401 }
-    )
+    );
   }
 
-  const { id } = await params
-  const bienId = Number(id)
+  const { id } = await params;
+  const bienId = Number(id);
+  const body = await request.json();
 
-  const body = await request.json()
-  const { nom, adresse, type, description } = body
+  const existingBien = await prisma.bien.findUnique({ where: { id: bienId } });
+  if (!existingBien || existingBien.userId !== session.user.id) {
+    return NextResponse.json(
+      { error: "Bien non trouvé" },
+      { status: 404 }
+    );
+  }
+
+  // Si c'est juste une mise à jour des photos
+  if (body.photos && !body.nom) {
+    try {
+      const bien = await prisma.bien.update({
+        where: { id: bienId },
+        data: { photos: body.photos },
+      });
+      return NextResponse.json(bien, { status: 200 });
+    } catch {
+      return NextResponse.json(
+        { error: "Erreur lors de la mise à jour des photos" },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Sinon, mise à jour classique
+  const { nom, adresse, type, description } = body;
 
   if (!nom || !adresse || !type) {
     return NextResponse.json(
       { error: "Champs requis manquants" },
       { status: 400 }
-    )
+    );
   }
 
-  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"]
+  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"];
   if (!validTypes.includes(type)) {
     return NextResponse.json(
       { error: "Type de bien invalide" },
       { status: 400 }
-    )
-  }
-
-  const existingBien = await prisma.bien.findUnique({ where: { id: bienId } })
-  if (!existingBien || existingBien.userId !== session.user.id) {
-    return NextResponse.json(
-      { error: "Bien non trouvé" },
-      { status: 404 }
-    )
+    );
   }
 
   try {
     const bien = await prisma.bien.update({
       where: { id: bienId },
-      data: { nom, adresse, type, description }
-    })
-    return NextResponse.json(bien, { status: 200 })
+      data: { nom, adresse, type, description },
+    });
+    return NextResponse.json(bien, { status: 200 });
   } catch {
     return NextResponse.json(
       { error: "Erreur lors de la modification du bien" },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -72,13 +90,21 @@ export async function DELETE(
   
     const { id } = await params
     const bienId = Number(id)
-  
+
   
     const existingBien = await prisma.bien.findUnique({ where: { id: bienId } })
     if (!existingBien || existingBien.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Bien non trouvé" },
         { status: 404 }
+      )
+    }
+
+    const locataireCount = await prisma.locataire.count({ where: { bienId: bienId } })
+    if (locataireCount > 0) {
+      return NextResponse.json(
+        { error: "Veuillez supprimer les locataires avant de supprimer ce bien" },
+        { status: 400 }
       )
     }
   
@@ -104,29 +130,43 @@ export async function DELETE(
       return NextResponse.json(
         { error: "Non autorisé" },
         { status: 401 }
-      )
+      );
     }
   
-    const { id } = await params
-    const bienId = Number(id)
+    const { id } = await params;
+    const bienId = Number(id);
   
     const existingBien = await prisma.bien.findUnique({
       where: { id: bienId },
       include: {
         sousBiens: {
           include: {
-            locataires: true
-          }
-        }
-      }
-    })
+            locataires: true,
+          },
+        },
+      },
+    });
   
     if (!existingBien || existingBien.userId !== session.user.id) {
       return NextResponse.json(
         { error: "Bien non trouvé" },
         { status: 404 }
-      )
+      );
     }
   
-    return NextResponse.json(existingBien, { status: 200 })
+    // Générer les URLs des photos des chambres
+    const sousBiensAvecPhotos = await Promise.all(
+      existingBien.sousBiens.map(async (chambre) => {
+        if (chambre.photos.length > 0) {
+          const photoPrincipaleUrl = await getFileUrl(chambre.photos[0]);
+          return { ...chambre, photoPrincipaleUrl };
+        }
+        return { ...chambre, photoPrincipaleUrl: null };
+      })
+    );
+  
+    return NextResponse.json(
+      { ...existingBien, sousBiens: sousBiensAvecPhotos },
+      { status: 200 }
+    );
   }

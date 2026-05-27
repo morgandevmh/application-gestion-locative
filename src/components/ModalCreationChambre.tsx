@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ModalGestionPhotos from "@/components/ModalGestionPhotos";
 
 type ModalCreationChambreProps = {
   bienId: string | string[] | undefined;
@@ -15,6 +16,7 @@ export default function ModalCreationChambre({
 }: ModalCreationChambreProps) {
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [chambreCreeId, setChambreCreeId] = useState<number | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,8 +50,20 @@ export default function ModalCreationChambre({
       setErrors([result.error]);
       setIsLoading(false);
     } else {
-      onSuccess();
+      const result = await response.json();
+      setChambreCreeId(result.id);
     }
+  }
+
+  if (chambreCreeId) {
+    return (
+      <ModalGestionPhotos
+        bienId={chambreCreeId}
+        onClose={() => {
+          onSuccess();
+        }}
+      />
+    );
   }
 
   return (

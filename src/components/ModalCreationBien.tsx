@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ModalGestionPhotos from "@/components/ModalGestionPhotos";
 
 type ModalCreationBienProps = {
   onClose: () => void;
@@ -13,6 +14,7 @@ export default function ModalCreationBien({
 }: ModalCreationBienProps) {
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [bienCreeId, setBienCreeId] = useState<number | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -54,8 +56,20 @@ export default function ModalCreationBien({
       setErrors([result.error]);
       setIsLoading(false);
     } else {
-      onSuccess();
+      const result = await response.json();
+      setBienCreeId(result.id);
     }
+  }
+
+  if (bienCreeId) {
+    return (
+      <ModalGestionPhotos
+        bienId={bienCreeId}
+        onClose={() => {
+          onSuccess();
+        }}
+      />
+    );
   }
 
   return (
