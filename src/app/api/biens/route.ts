@@ -3,8 +3,7 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { getFileUrl } from "@/lib/r2";
 import { createBienSchema } from "@/lib/validations/bien.schema";
-
-//CREATE C 
+ 
 export async function POST(request: Request) {
   const session = await getSession();
   if (!session) {
@@ -78,7 +77,7 @@ export async function GET(request: Request) {
         ? { parent: { select: { nom: true } } }
         : undefined,
     });
-    // Générer l'URL présignée de la photo principale pour chaque bien
+    // Générer l'URL présigné de la photo principale pour chaque bien
     const biensAvecPhotos = await Promise.all(
       biens.map(async (bien) => {
         if (bien.photos.length > 0) {

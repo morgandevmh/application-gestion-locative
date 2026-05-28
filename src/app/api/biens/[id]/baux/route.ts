@@ -26,7 +26,6 @@ export async function POST(
     return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
   }
 
-  // Vérifier que le locataire appartient à ce bien
   const locataire = await prisma.locataire.findUnique({ where: { id: Number(locataireId) } });
   if (!locataire || locataire.bienId !== bienId) {
     return NextResponse.json({ error: "Locataire non trouvé pour ce bien" }, { status: 404 });

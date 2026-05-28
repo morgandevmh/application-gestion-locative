@@ -18,7 +18,6 @@ export async function POST(
   const { id } = await params;
   const bienId = Number(id);
 
-  // Ownership : vérifier que le bien parent appartient à l'user
   const existingBien = await prisma.bien.findUnique({ where: { id: bienId } });
   if (!existingBien || existingBien.userId !== session.user.id) {
     return NextResponse.json(
@@ -27,7 +26,6 @@ export async function POST(
     );
   }
 
-  // Validation Zod
   const body = await request.json();
   const result = createLocataireSchema.safeParse(body);
   if (!result.success) {

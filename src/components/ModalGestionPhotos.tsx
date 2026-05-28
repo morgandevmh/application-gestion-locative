@@ -68,9 +68,9 @@ export default function ModalGestionPhotos({
   }
 
   async function handleSetPrincipale(index: number) {
-    if (index === 0) return; // déjà principale
+    if (index === 0) return; 
 
-    // Réorganiser : mettre la photo sélectionnée en premier
+    // Réorganise mettre la photo sélectionnée en premier
     const newOrder = [
       photos[index].key,
       ...photos.filter((_, i) => i !== index).map((p) => p.key),

@@ -37,7 +37,7 @@ const navLinks = [
     ),
   },
   {
-    href: "/dashboard/bails",
+    href: "/dashboard/baux",
     label: "Baux",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -60,13 +60,12 @@ export default function DashboardLayout({
     return pathname.startsWith(href);
   };
 
-  // Split links for mobile: 2 left, 2 right (profile in center)
   const leftLinks = navLinks.slice(0, 2);
   const rightLinks = navLinks.slice(2);
 
   return (
     <div className="flex min-h-screen" style={{ background: "var(--background)" }}>
-      {/* Sidebar — desktop */}
+      {/* Sidebar desktop */}
       <aside
         className="hidden md:flex flex-col fixed top-0 left-0 h-screen z-30"
 
@@ -213,7 +212,7 @@ export default function DashboardLayout({
         {children}
       </main>
 
-      {/*Bottom navbar — mobile*/}
+      {/*Bottom navbar mobile*/}
       <nav
         className="fixed bottom-0 left-0 right-0 flex items-end justify-around md:hidden z-40"
         style={{

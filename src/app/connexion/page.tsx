@@ -1,4 +1,3 @@
-// page connexion
 "use client";
 
 import { login } from "@/actions/auth";
@@ -48,7 +47,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* IMAGE / BRANDING — F: noir + glow bleu */}
+      {/* IMAGE gradient noir/bleu */}
       <div
         className="h-[35vh] lg:h-auto pb-15 w-full lg:w-[60%] lg:order-2 relative overflow-hidden p-0"
         style={{
@@ -97,7 +96,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Zone d'erreurs */}
+          {/* Zone erreurs */}
           {errors.length > 0 && (
             <div className="mb-6 rounded-lg border border-red bg-red-pastel p-4">
               <ul className="space-y-1">

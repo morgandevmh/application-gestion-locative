@@ -1,4 +1,3 @@
-// page inscription 
 "use client";
 
 import { register } from "@/actions/auth";
@@ -81,7 +80,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* IMAGE / BRANDING — D: bleu nuit subtil */}
+      {/* IMAGE degradé bleu/noir */}
       <div
         className="h-[12vh] lg:h-auto p-2 w-full lg:w-[60%] lg:order-2 relative overflow-hidden"
         style={{

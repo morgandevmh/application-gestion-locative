@@ -7,7 +7,6 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // 1 session
   const session = await getSession();
   if (!session) {
     return NextResponse.json(
@@ -16,11 +15,9 @@ export async function POST(
     );
   }
 
-  // 2 Recuperer l'ID de la colocation depuis l'URL
   const { id } = await params;
   const parentId = Number(id);
 
-  // 3 Verification double du parent
   const colocation = await prisma.bien.findUnique({ where: { id: parentId } });
   if (!colocation || colocation.userId !== session.user.id) {
     return NextResponse.json(
@@ -35,7 +32,6 @@ export async function POST(
     );
   }
 
-  // 4 Validation Zod du body
   const body = await request.json();
   const result = createChambreSchema.safeParse(body);
   if (!result.success) {
@@ -45,7 +41,6 @@ export async function POST(
     );
   }
 
-  // 5 Image placeholder aléatoire
   const images = [
     "/placeholders/1.jpg", "/placeholders/2.jpg", "/placeholders/3.jpg",
     "/placeholders/4.jpg", "/placeholders/5.jpg", "/placeholders/6.jpg",

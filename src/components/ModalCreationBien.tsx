@@ -192,7 +192,7 @@ export default function ModalCreationBien({
           </form>
         </div>
 
-        {/* Footer — boutons */}
+        {/* Footer boutons */}
         <div className="flex gap-3 px-6 py-4 border-t border-border shrink-0">
           <button
             type="button"

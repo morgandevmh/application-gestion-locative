@@ -130,7 +130,7 @@ export async function DELETE(
       );
     }
   
-    // Générer les URLs des photos des chambres
+    // générer les urls des photos des bien 
     const sousBiensAvecPhotos = await Promise.all(
       existingBien.sousBiens.map(async (chambre) => {
         if (chambre.photos.length > 0) {

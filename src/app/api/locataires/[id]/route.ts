@@ -18,7 +18,6 @@ export async function PUT(
   const { id } = await params;
   const locataireId = Number(id);
 
-  // Ownership via la relation bien
   const existingLocataire = await prisma.locataire.findUnique({
     where: { id: locataireId },
     include: { bien: true },
@@ -30,7 +29,6 @@ export async function PUT(
     );
   }
 
-  // Validation Zod
   const body = await request.json();
   const result = updateLocataireSchema.safeParse(body);
   if (!result.success) {

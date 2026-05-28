@@ -20,9 +20,9 @@ const ALLOWED_TYPES = [
   "image/webp",
 ];
 
-const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo en octets
+const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo 
 
-// upload
+
 export async function uploadFile(
     file: Buffer,
     folder: string,
@@ -55,7 +55,7 @@ export async function uploadFile(
     return key;
   }
 
-  // delete 
+
   export async function deleteFile(key: string) {
     await r2.send(
       new DeleteObjectCommand({
