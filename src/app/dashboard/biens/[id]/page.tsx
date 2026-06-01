@@ -210,7 +210,7 @@ export default function BienDetailPage() {
        </button>
       )}
 
-      {/* Header card — gradient compact */}
+      {/* Header card gradient compact */}
       <div
         className="rounded-xl mt-4 mb-8 overflow-hidden"
         style={{

@@ -1,4 +1,3 @@
-//page menu dashboard 
 "use client";
 
 import { useState, useEffect } from "react";
@@ -119,7 +118,7 @@ export default function DashboardPage() {
         {/* colonne gauche */}
         <div className="flex flex-col gap-3 lg:min-h-0">
 
-          {/* M1 — Header gradient */}
+          {/* M1 Header gradient */}
           <div
             className="rounded-xl px-6 py-4 flex items-center justify-between shrink-0"
             style={{
@@ -169,7 +168,7 @@ export default function DashboardPage() {
 
           {/* M3 + M4 */}
           <div className="grid grid-cols-2 md:flex gap-3 shrink-0">
-            {/* M4 — Taux de remplissage */}
+            {/* M4 Taux de remplissage */}
             <div className="bg-surface-elevated rounded-lg border border-border p-4 flex flex-col items-center justify-center md:w-[180px]">
               <div className="relative w-20 h-20">
                 <svg viewBox="0 0 36 36" className="w-full h-full">
@@ -207,7 +206,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            {/* M3 — Générer bail */}
+            {/* M3  Générer bail */}
             <div className="md:flex-1 bg-surface-elevated rounded-lg border border-border p-4 flex items-center justify-center">
               <p className="font-body text-sm text-text-tertiary">
                 Générer un bail
@@ -215,10 +214,10 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* M5 + M6 — Résumé */}
+          {/* M5 + M6  Résumé */}
           <div className="bg-surface-elevated rounded-lg border border-border p-5 shrink-0 lg:max-h-[160px]">
             <div className="flex flex-col md:flex-row gap-4">
-              {/* Résumé global — 70% */}
+              {/* Résumé global  70% */}
               <div className="md:flex-[7]">
                 <h3 className="font-heading py-2 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3">
                   Résumé global
@@ -251,7 +250,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Patrimoine — 30% */}
+              {/* Patrimoine 30% */}
               <div className="md:flex-[3] border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-4">
                 <h3 className="font-heading py-1 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3">
                   Patrimoine
@@ -282,7 +281,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* M8 — Derniers biens */}
+          {/* M8 Derniers biens */}
           <div className="bg-surface-elevated rounded-lg border border-border p-5 flex-1 min-h-0 overflow-hidden flex flex-col">
             <h3 className="font-heading pb-4 font-bold text-[11px] leading-[14px] tracking-[0.08em] uppercase text-text-tertiary mb-3 shrink-0">
               Derniers biens modifiés
@@ -354,12 +353,12 @@ export default function DashboardPage() {
 
         {/* Colonne droite  */}
         <div className="flex flex-col gap-3 lg:min-h-0">
-          {/* M2 — Calendrier */}
+          {/* M2 Calendrier */}
           <div className="bg-surface-elevated rounded-lg border border-border p-4 flex items-center justify-center shrink-0 lg:flex-[30]">
             <p className="font-body text-sm text-text-tertiary">Calendrier</p>
           </div>
 
-          {/* M7 — Derniers locataires (gradient) */}
+          {/* M7 Derniers locataires (gradient) */}
           <div
             className="rounded-xl p-5 lg:flex-[70] min-h-0 overflow-hidden"
             style={{

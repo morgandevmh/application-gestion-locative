@@ -121,7 +121,7 @@ export default function LocataireDetailPage() {
          ← Retour
       </button>
 
-      {/* Header card — gradient */}
+      {/* Header card gradient */}
       <div
         className="mb-8 rounded-xl"
         style={{
@@ -354,7 +354,7 @@ export default function LocataireDetailPage() {
           Documents
         </h2>
         <div className="bg-surface-elevated rounded-lg border border-border p-5 flex flex-col gap-4">
-          {/* État des lieux — Entrée */}
+          {/* État des lieux: Entrée */}
           <div className="flex items-center justify-between">
             <div>
               <p className="font-body text-[15px] text-text m-0">
@@ -402,7 +402,7 @@ export default function LocataireDetailPage() {
 
           <div className="border-t border-border" />
 
-          {/* État des lieux — Sortie */}
+          {/* État des lieux : Sortie */}
           <div className="flex items-center justify-between">
             <div>
               <p className="font-body text-[15px] text-text m-0">

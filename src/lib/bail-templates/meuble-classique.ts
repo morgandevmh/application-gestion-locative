@@ -1,5 +1,4 @@
-// Template de bail meublé classique
-// Les placeholders {{...}} seront remplacés par les vraies données lors de la génération
+// Template de bail meublé classique, les placeholders {{...}} seront remplacés par les vraies données lors de la génération
 
 export const TEMPLATE_MEUBLE_CLASSIQUE = {
   id: "meuble_classique",

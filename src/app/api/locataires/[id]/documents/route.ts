@@ -53,7 +53,6 @@ export async function POST(
   const typedField = field as DocumentField;
 
   try {
-    // Supprimer l'ancien fichier s'il existe
     const oldKey = locataire[typedField];
     if (oldKey) {
       await deleteFile(oldKey);

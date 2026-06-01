@@ -71,7 +71,7 @@ export default function BailDetailPage() {
     });
 
     if (response.ok) {
-      router.push("/dashboard/bails");
+      router.push("/dashboard/baux");
     }
   }
 
@@ -96,7 +96,7 @@ export default function BailDetailPage() {
         ← Retour
       </button>
 
-      {/* Header card — gradient */}
+      {/* Header card gradient */}
       <div
         className="rounded-xl mt-4 mb-8 overflow-hidden"
         style={{

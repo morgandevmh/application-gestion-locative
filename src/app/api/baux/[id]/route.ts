@@ -28,7 +28,6 @@ export async function GET(
     return NextResponse.json({ error: "Bail non trouvé" }, { status: 404 });
   }
 
-  // Générer l'URL présignée si un PDF existe
   let pdfPresignedUrl = null;
   if (bail.pdfUrl) {
     pdfPresignedUrl = await getFileUrl(bail.pdfUrl);

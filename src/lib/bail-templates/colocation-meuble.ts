@@ -1,6 +1,4 @@
-// Template de bail meublé en colocation (baux multiples, non solidaire)
-// Chaque colocataire signe son propre bail pour sa chambre privative
-// Les placeholders {{...}} seront remplacés par les vraies données lors de la génération
+// Template de bail meublé en colocation (baux multiples), bail par chambre, placeholders {{...}} pour les données 
 
 export const TEMPLATE_COLOCATION_MEUBLE = {
     id: "colocation_meuble",

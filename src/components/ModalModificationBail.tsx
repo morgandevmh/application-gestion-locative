@@ -90,7 +90,6 @@ export default function ModalModificationBail({
     (parseFloat(complementLoyer) || 0) +
     (parseFloat(charges) || 0);
 
-  // Label du bien (avec parent si chambre)
   const bienLabel = bail.bien.parent
     ? `${bail.bien.parent.nom} — ${bail.bien.nom}`
     : bail.bien.nom;
@@ -130,7 +129,6 @@ export default function ModalModificationBail({
       return;
     }
 
-    // Régénération automatique du PDF
     await fetch(`/api/baux/${bail.id}/generer`, {
       method: "POST",
     });
@@ -183,7 +181,7 @@ export default function ModalModificationBail({
           )}
 
           <form id="form-bail-modif" onSubmit={handleSubmit} className="space-y-5">
-            {/* Bien — non modifiable, affiché en lecture seule */}
+            {/* Bien non modifiable, affiché en lecture seule */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Bien
@@ -196,7 +194,7 @@ export default function ModalModificationBail({
               </p>
             </div>
 
-            {/* Locataire — non modifiable */}
+            {/* Locataire non modifiable */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Locataire
@@ -209,7 +207,7 @@ export default function ModalModificationBail({
               </p>
             </div>
 
-            {/* Template — non modifiable */}
+            {/* Template non modifiable */}
             <div>
               <label className="block font-heading font-bold text-[13px] text-text mb-[6px]">
                 Template

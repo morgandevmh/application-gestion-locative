@@ -140,7 +140,7 @@ export default function ModalCreationBail({
     } else {
       const result = await response.json();
 
-      // Générer le PDF automatiquement
+      // Générer le pdf automatiquement
       await fetch(`/api/baux/${result.id}/generer`, {
         method: "POST",
       });

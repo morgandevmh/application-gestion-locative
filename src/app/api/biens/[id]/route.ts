@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { getFileUrl } from "@/lib/r2";
+import { updateBienSchema } from "@/lib/validations/bien.schema";
 
 export async function PUT(
   request: Request,
@@ -17,7 +18,6 @@ export async function PUT(
 
   const { id } = await params;
   const bienId = Number(id);
-  const body = await request.json();
 
   const existingBien = await prisma.bien.findUnique({ where: { id: bienId } });
   if (!existingBien || existingBien.userId !== session.user.id) {
@@ -27,36 +27,12 @@ export async function PUT(
     );
   }
 
-  // Si c'est juste une mise à jour des photos
-  if (body.photos && !body.nom) {
-    try {
-      const bien = await prisma.bien.update({
-        where: { id: bienId },
-        data: { photos: body.photos },
-      });
-      return NextResponse.json(bien, { status: 200 });
-    } catch {
-      return NextResponse.json(
-        { error: "Erreur lors de la mise à jour des photos" },
-        { status: 500 }
-      );
-    }
-  }
+  const body = await request.json();
 
-  // Sinon, mise à jour classique
-  const { nom, adresse, type, description } = body;
-
-  if (!nom || !adresse || !type) {
+  const result = updateBienSchema.safeParse(body);
+  if (!result.success) {
     return NextResponse.json(
-      { error: "Champs requis manquants" },
-      { status: 400 }
-    );
-  }
-
-  const validTypes = ["APPARTEMENT", "MAISON", "STUDIO", "COLOCATION"];
-  if (!validTypes.includes(type)) {
-    return NextResponse.json(
-      { error: "Type de bien invalide" },
+      { error: "Données invalides", issues: result.error.flatten() },
       { status: 400 }
     );
   }
@@ -64,7 +40,7 @@ export async function PUT(
   try {
     const bien = await prisma.bien.update({
       where: { id: bienId },
-      data: { nom, adresse, type, description },
+      data: result.data,
     });
     return NextResponse.json(bien, { status: 200 });
   } catch {
@@ -154,7 +130,7 @@ export async function DELETE(
       );
     }
   
-    // Générer les URLs des photos des chambres
+    // générer les urls des photos des bien 
     const sousBiensAvecPhotos = await Promise.all(
       existingBien.sousBiens.map(async (chambre) => {
         if (chambre.photos.length > 0) {
