@@ -9,9 +9,9 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { nom, contenu } = body;
+  const { nom, contenu, titre } = body;
 
-  if (!nom || !contenu) {
+  if (!nom || !contenu || !titre) {
     return NextResponse.json({ error: "Nom et contenu requis" }, { status: 400 });
   }
 
@@ -20,6 +20,7 @@ export async function POST(request: Request) {
       data: {
         nom,
         contenu,
+        titre,
         isDefault: false,
         userId: session.user.id,
       },
