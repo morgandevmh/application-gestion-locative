@@ -2,9 +2,15 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } fro
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "crypto";
 
+// "eu" en production (bucket en juridiction UE), absent en développement
+const jurisdiction = process.env.R2_JURISDICTION;
+const endpoint = jurisdiction
+  ? `https://${process.env.R2_ACCOUNT_ID}.${jurisdiction}.r2.cloudflarestorage.com`
+  : `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+
 const r2 = new S3Client({
   region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  endpoint,
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
